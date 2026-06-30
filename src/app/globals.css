@@ -1,0 +1,79 @@
+@import "tailwindcss";
+
+@theme {
+  /* Marka Renkleri - Sunline Brand Kit */
+  --color-paper: #F4F1E8;
+  --color-ink: #141414;
+  --color-flare: #FF4A1E;
+  --color-volt: #2733E6;
+
+  /* Fontlar */
+  --font-bricolage: var(--font-bricolage-grotesque), ui-sans-serif, system-ui, sans-serif;
+  --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ===================== Temel ===================== */
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-ink); /* Koyu tema, editoryal hava */
+  color: var(--color-paper);
+  font-family: var(--font-inter);
+  -webkit-font-smoothing: antialiased;
+}
+
+@utility font-display {
+  font-family: var(--font-bricolage);
+  text-transform: uppercase;
+}
+
+/* ===================== Bileşen yardımcıları ===================== */
+@layer components {
+  /* Volt Çerçeve (Brand Kit kuralı) */
+  .frame-volt {
+    @apply border-4 border-[var(--color-volt)] relative overflow-hidden;
+  }
+  
+  /* Provenance Badge (Recorded at Sunline) */
+  .badge-provenance {
+    @apply border border-[var(--color-paper)] rounded-full px-4 py-1 text-sm font-medium tracking-wide uppercase inline-block;
+  }
+
+  /* Etiket / Sticker (Tag) */
+  .tag-flare {
+    @apply bg-[var(--color-flare)] text-[var(--color-ink)] px-3 py-1 font-display font-bold rounded-md uppercase tracking-wider;
+  }
+  
+  .tag-volt {
+    @apply bg-[var(--color-volt)] text-[var(--color-paper)] px-3 py-1 font-display font-bold rounded-md uppercase tracking-wider;
+  }
+
+  /* Butonlar */
+  .btn-flare {
+    @apply inline-flex h-12 items-center justify-center bg-[var(--color-flare)] text-[var(--color-ink)] font-display font-bold px-8 uppercase tracking-widest transition hover:brightness-110 active:scale-95;
+  }
+
+  .btn-outline-paper {
+    @apply inline-flex h-12 items-center justify-center border-2 border-[var(--color-paper)] text-[var(--color-paper)] font-display font-bold px-8 uppercase tracking-widest transition hover:bg-[var(--color-paper)] hover:text-[var(--color-ink)] active:scale-95;
+  }
+}
+
+/* Lenis Smooth Scroll CSS */
+html.lenis, html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
