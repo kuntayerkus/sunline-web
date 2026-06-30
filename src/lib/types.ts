@@ -127,6 +127,20 @@ export type MaliHareket = {
   updated_at: string;
 };
 
+export type SabitGider = {
+  id: string;
+  ad: string;
+  kategori: string | null;
+  tutar: number;
+  baslangic_ay: string; // date (YYYY-MM-DD)
+  bitis_ay: string | null;
+  aktif: boolean;
+  notlar: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type NotIliskiTip = "is" | "envanter" | "musteri" | "genel";
 export type Not = {
   id: string;

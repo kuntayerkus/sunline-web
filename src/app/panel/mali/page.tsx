@@ -3,7 +3,7 @@ import { gerekliOturum } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { MaliClient } from "./mali-client";
-import type { MaliHareket, Is } from "@/lib/types";
+import type { MaliHareket, Is, SabitGider } from "@/lib/types";
 
 export default async function MaliPage() {
   const { profile } = await gerekliOturum();
@@ -13,28 +13,27 @@ export default async function MaliPage() {
   const [
     { data: hareketler },
     { data: isler },
+    sabitRes,
   ] = await Promise.all([
     supabase.from("mali_hareket").select("*").order("tarih", { ascending: false }),
     supabase.from("isler").select("*").order("baslangic", { ascending: false }),
+    // Sabit giderler tablosu (0002_mali.sql). Migration uygulanmadıysa hata
+    // gelir; sayfayı kırmamak için defansif: boş listeye düş.
+    supabase.from("sabit_gider").select("*").order("created_at", { ascending: false }),
   ]);
 
-  const tumHareketler = (hareketler as MaliHareket[]) || [];
-  const toplamGelir = tumHareketler.filter(h => h.tip === "gelir").reduce((sum, h) => sum + h.tutar, 0);
-  const toplamGider = tumHareketler.filter(h => h.tip === "gider").reduce((sum, h) => sum + h.tutar, 0);
-  const net = toplamGelir - toplamGider;
+  const sabitGiderler = (sabitRes.error ? [] : (sabitRes.data as SabitGider[])) || [];
 
   return (
     <div>
       <PageHeader
         baslik="Mali"
-        aciklama="Gelir-gider, haftalık/aylık rapor ve sezon analizi."
+        aciklama="Aylık gelir-gider, sabit giderler ve kategori analizi."
       />
       <MaliClient
-        hareketler={tumHareketler}
+        hareketler={(hareketler as MaliHareket[]) || []}
         isler={(isler as Is[]) || []}
-        toplamGelir={toplamGelir}
-        toplamGider={toplamGider}
-        net={net}
+        sabitGiderler={sabitGiderler}
       />
     </div>
   );
