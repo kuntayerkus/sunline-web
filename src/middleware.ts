@@ -1,8 +1,7 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
-// Next.js 16: kök "middleware" kuralı "proxy" olarak yeniden adlandırıldı.
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   return updateSession(request);
 }
 
