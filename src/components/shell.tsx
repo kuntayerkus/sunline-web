@@ -19,7 +19,7 @@ export function Shell({
   const [mobilAcik, setMobilAcik] = useState(false);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-stone-50 text-stone-900">
       {/* Masaüstü kenar menü */}
       <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 border-r border-stone-200 bg-white lg:block">
         <Sidebar rol={rol} />

@@ -7,6 +7,18 @@
   --color-flare: #FF4A1E;
   --color-volt: #2733E6;
 
+  /* Marka paleti (sıcak "güneş" turuncu/amber) — panel & auth arayüzü */
+  --color-brand-50: #FFF6ED;
+  --color-brand-100: #FFEAD5;
+  --color-brand-200: #FED1AA;
+  --color-brand-300: #FDB174;
+  --color-brand-400: #FB8C3C;
+  --color-brand-500: #F97216;
+  --color-brand-600: #EA5A0C;
+  --color-brand-700: #C2420C;
+  --color-brand-800: #9A3412;
+  --color-brand-900: #7C2D12;
+
   /* Fontlar */
   --font-bricolage: var(--font-bricolage-grotesque), ui-sans-serif, system-ui, sans-serif;
   --font-inter: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -76,4 +88,89 @@ html.lenis, html.lenis body {
 }
 .lenis.lenis-smooth iframe {
   pointer-events: none;
+}
+
+/* ===================== Panel arayüz bileşenleri ===================== */
+/* Not (Tailwind v4): aşağıdaki bileşen sınıfları yalnızca utility'lerle
+   tanımlanır; başka bir bileşen sınıfı @apply edilmez. */
+@layer components {
+  /* Kart */
+  .card {
+    @apply rounded-xl border border-stone-200 bg-white;
+  }
+
+  /* Butonlar (panel) */
+  .btn-primary {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-brand-500 px-4 text-sm font-medium text-white transition hover:bg-brand-600 active:scale-95 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-outline {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-stone-300 bg-white px-4 text-sm font-medium text-stone-700 transition hover:bg-stone-50 active:scale-95 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-ghost {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium text-stone-600 transition hover:bg-stone-100 active:scale-95 disabled:pointer-events-none disabled:opacity-50;
+  }
+  .btn-danger {
+    @apply inline-flex h-10 items-center justify-center gap-2 rounded-lg bg-red-600 px-4 text-sm font-medium text-white transition hover:bg-red-700 active:scale-95 disabled:pointer-events-none disabled:opacity-50;
+  }
+  /* Boyut değiştirici — buton sınıflarından SONRA gelmeli ki yükseklik/padding'i ezsin */
+  .btn-sm {
+    @apply h-8 gap-1.5 px-3 text-xs;
+  }
+
+  /* Form alanları */
+  .input,
+  .select {
+    @apply h-10 w-full rounded-lg border border-stone-300 bg-white px-3 text-sm text-stone-900 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-500/25 disabled:bg-stone-50 disabled:text-stone-400;
+  }
+  .textarea {
+    @apply w-full rounded-lg border border-stone-300 bg-white px-3 py-2 text-sm text-stone-900 outline-none transition focus:border-brand-400 focus:ring-2 focus:ring-brand-500/25;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-stone-700;
+  }
+
+  /* Rozet */
+  .badge {
+    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-medium;
+  }
+}
+
+/* Tablo (.tbl) — nested selektörler @layer dışında, sade CSS nesting ile */
+.tbl {
+  @apply w-full text-left text-sm;
+}
+.tbl thead th {
+  @apply border-b border-stone-200 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-stone-500;
+}
+.tbl tbody td {
+  @apply border-b border-stone-100 px-4 py-3 align-middle text-stone-700;
+}
+.tbl tbody tr:last-child td {
+  @apply border-b-0;
+}
+.tbl tbody tr:hover td {
+  @apply bg-stone-50;
+}
+
+/* ===================== Modal giriş animasyonları ===================== */
+/* modal.tsx 'animate-in fade-in slide-in-from-bottom-4' sınıflarını kullanıyor;
+   tailwindcss-animate kurulu olmadığı için hafif karşılıkları burada. */
+@keyframes sl-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes sl-slide-up {
+  from { opacity: 0; transform: translateY(1rem); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  animation-duration: 0.2s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: both;
+}
+.fade-in {
+  animation-name: sl-fade-in;
+}
+.slide-in-from-bottom-4 {
+  animation-name: sl-slide-up;
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Bricolage_Grotesque } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
+import { SITE_URL, INSTAGRAM_URL, TELEFON_GORUNUM } from "@/lib/site";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -16,6 +17,7 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'Sunline | İzmir Premium Kayıt Stüdyosu ve Backline Kiralama',
   description: 'İzmir\'in en iyi premium kayıt stüdyosu ve profesyonel backline (konser ve festival ekipmanı) kiralama şirketi. Üst düzey müzik prodüksiyonu ve etkinlik çözümleri.',
   keywords: [
@@ -41,16 +43,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Sunline | İzmir Premium Kayıt Stüdyosu ve Backline Kiralama',
     description: 'İzmir\'de müzisyenler ve festival organizatörleri için üst düzey kayıt stüdyosu ve profesyonel backline kiralama hizmetleri.',
-    url: 'https://www.sunline.com.tr',
+    url: SITE_URL,
     siteName: 'Sunline',
-    images: [
-      {
-        url: 'https://www.sunline.com.tr/og-image.jpg',
-        width: 1200,
-        height: 630,
-        alt: 'Sunline Premium Kayıt Stüdyosu ve Ekipmanları',
-      },
-    ],
     locale: 'tr_TR',
     type: 'website',
   },
@@ -58,7 +52,6 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Sunline | İzmir Premium Kayıt Stüdyosu',
     description: 'İzmir\'in en iyi premium kayıt stüdyosu ve profesyonel backline kiralama şirketi.',
-    images: ['https://www.sunline.com.tr/twitter-image.jpg'],
   },
   robots: {
     index: true,
@@ -81,10 +74,10 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "ProfessionalService", "EntertainmentBusiness"],
     "name": "Sunline",
-    "image": "https://www.sunline.com.tr/logo.png",
-    "@id": "https://www.sunline.com.tr",
-    "url": "https://www.sunline.com.tr",
-    "telephone": "+90-505-222-5541",
+    "image": `${SITE_URL}/logo.png`,
+    "@id": SITE_URL,
+    "url": SITE_URL,
+    "telephone": TELEFON_GORUNUM,
     "priceRange": "$$$",
     "address": {
       "@type": "PostalAddress",
@@ -111,7 +104,7 @@ export default function RootLayout({
     ],
     "areaServed": "İzmir, Turkey",
     "sameAs": [
-      "https://www.instagram.com/sunlinestudyo"
+      INSTAGRAM_URL
     ]
   };
 

@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Loader, { playedLoaders } from "@/components/Loader";
+import { whatsappLink, INSTAGRAM_URL } from "@/lib/site";
 
 export default function Home() {
   const containerRef = useRef(null);
@@ -126,7 +127,14 @@ export default function Home() {
             </div>
 
             <div className="mt-8">
-              <button className="btn-outline-paper">Stüdyoyu İncele</button>
+              <a
+                href={whatsappLink("Merhaba, Sunline stüdyosu (kayıt/prova) hakkında bilgi almak istiyorum.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline-paper"
+              >
+                Stüdyoyu İncele
+              </a>
             </div>
           </div>
           <div className="w-full md:w-1/2">
@@ -152,7 +160,14 @@ export default function Home() {
               Analog sıcaklık ve dijital keskinlik. Konsol odamızdaki devasa Genelec monitörler ile şarkının hak ettiği son dokunuş, endüstri standartlarında net bir duyum.
             </p>
             <div className="mt-8">
-              <button className="btn-flare">Örnekleri Dinle</button>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-flare"
+              >
+                Örnekleri Dinle
+              </a>
             </div>
           </div>
           <div className="w-full md:w-1/2">
@@ -193,13 +208,20 @@ export default function Home() {
          <h2 className="text-4xl md:text-6xl font-display font-black tracking-tighter mb-8">
             SAHNEYE HAZIRLAN<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
          </h2>
-         <button className="btn-flare text-xl h-16 px-12 mb-20">Bize Ulaşın</button>
+         <a
+            href={whatsappLink("Merhaba, Sunline ile çalışmak istiyorum. Detayları konuşabilir miyiz?")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-flare text-xl h-16 px-12 mb-20"
+         >
+            Bize Ulaşın
+         </a>
 
          <div className="w-full max-w-6xl flex flex-col sm:flex-row justify-between items-center gap-4 opacity-50 font-display uppercase tracking-widest text-sm">
             <span>© 2026 SUNLINE STUDIO</span>
             <div className="flex gap-6">
-               <a href="https://www.instagram.com/sunlinestudyo" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-flare)] transition">Instagram</a>
-               <a href="https://wa.me/905052225541" target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-flare)] transition">WhatsApp</a>
+               <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-flare)] transition">Instagram</a>
+               <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="hover:text-[var(--color-flare)] transition">WhatsApp</a>
             </div>
          </div>
       </footer>

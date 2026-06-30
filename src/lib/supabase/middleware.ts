@@ -42,7 +42,9 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && (path === "/giris" || path === "/")) {
+  // Girişli kullanıcı giriş ekranını görürse panele al. Anasayfa (/) herkese
+  // açık pazarlama sayfasıdır; girişli kullanıcıyı oradan yönlendirme.
+  if (user && path === "/giris") {
     const url = request.nextUrl.clone();
     url.pathname = "/panel";
     return NextResponse.redirect(url);

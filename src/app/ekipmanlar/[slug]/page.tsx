@@ -6,6 +6,11 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
+// Tüm ekipman kategorilerini build sırasında statik üret (SSG).
+export function generateStaticParams() {
+  return Object.keys(gearData).map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const data = gearData[slug];
