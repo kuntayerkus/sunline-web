@@ -1,7 +1,7 @@
 // Site geneli sabitler (iletişim, sosyal, kanonik URL).
 // Tek kaynak: footer, JSON-LD, metadata ve CTA'lar buradan beslenir.
 
-export const SITE_URL = "https://www.sunline.com.tr";
+export const SITE_URL = "https://www.sunlinestudyo.com.tr";
 
 export const SITE_NAME = "Sunline";
 
