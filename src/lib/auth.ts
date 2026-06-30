@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/lib/types";
@@ -5,8 +6,11 @@ import type { Profile } from "@/lib/types";
 /**
  * Girişli kullanıcıyı ve profilini (rol dahil) döndürür.
  * Giriş yoksa /giris'e yönlendirir. Korumalı sayfalarda kullanın.
+ *
+ * cache(): aynı istek içinde (layout + sayfa birlikte) tekrar çağrılırsa
+ * Supabase'e bir kez gidilir; gereksiz getUser/profil sorgusu tekrarı önlenir.
  */
-export async function gerekliOturum(): Promise<{
+export const gerekliOturum = cache(async function gerekliOturum(): Promise<{
   userId: string;
   email: string | null;
   profile: Profile;
@@ -36,4 +40,4 @@ export async function gerekliOturum(): Promise<{
     } as Profile);
 
   return { userId: user.id, email: user.email ?? null, profile: guvenliProfil };
-}
+});
