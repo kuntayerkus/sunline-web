@@ -76,12 +76,23 @@ function gundeIs(is: IsWithMusteri, gun: Date): boolean {
   return bas < gunBit && bit > gunBas;
 }
 
+const TIP_LABEL: Record<string, string> = {
+  backline: "Backline", prova: "Prova", kayit: "Kayıt", mix: "Mix", mastering: "Mastering", diger: "Diğer",
+};
+
 export function TakvimClient({ isler }: { isler: IsWithMusteri[] }) {
   const bugun = new Date();
   const [yil, setYil] = useState(bugun.getFullYear());
   const [ay, setAy] = useState(bugun.getMonth());
+  const [gorunum, setGorunum] = useState<"liste" | "ay">("liste");
 
   const gunler = ayinGunleri(yil, ay);
+
+  // Ajanda (liste) görünümü: yalnız işi olan günler
+  const agenda = gunler
+    .filter((g) => g.buAy)
+    .map((g) => ({ tarih: g.tarih, gunIsler: isler.filter((is) => gundeIs(is, g.tarih)) }))
+    .filter((g) => g.gunIsler.length > 0);
 
   function oncekiAy() {
     if (ay === 0) { setYil(yil - 1); setAy(11); }
@@ -99,27 +110,68 @@ export function TakvimClient({ isler }: { isler: IsWithMusteri[] }) {
   return (
     <div>
       {/* Navigasyon */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <button onClick={oncekiAy} className="btn-ghost btn-sm" type="button">
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-1">
+          <button onClick={oncekiAy} className="btn-ghost btn-sm px-2" type="button">
             <ChevronLeft size={18} />
           </button>
-          <h2 className="text-lg font-semibold text-stone-900 min-w-[180px] text-center">
+          <h2 className="min-w-[150px] text-center text-base font-semibold text-stone-900">
             {AY_ISIMLERI[ay]} {yil}
           </h2>
-          <button onClick={sonrakiAy} className="btn-ghost btn-sm" type="button">
+          <button onClick={sonrakiAy} className="btn-ghost btn-sm px-2" type="button">
             <ChevronRight size={18} />
           </button>
         </div>
-        <button onClick={bugune} className="btn-outline btn-sm" type="button">
-          Bugün
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="flex rounded-lg bg-stone-100 p-0.5 text-sm font-medium">
+            <button onClick={() => setGorunum("liste")} type="button" className={`rounded-md px-3 py-1 transition ${gorunum === "liste" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500"}`}>Liste</button>
+            <button onClick={() => setGorunum("ay")} type="button" className={`rounded-md px-3 py-1 transition ${gorunum === "ay" ? "bg-white text-stone-900 shadow-sm" : "text-stone-500"}`}>Ay</button>
+          </div>
+          <button onClick={bugune} className="btn-outline btn-sm" type="button">Bugün</button>
+        </div>
       </div>
 
-      {/* Takvim Grid */}
-      <div className="card overflow-hidden">
+      {/* Ajanda (liste) görünümü */}
+      {gorunum === "liste" && (
+        agenda.length === 0 ? (
+          <div className="card p-8 text-center text-sm text-stone-500">Bu ay planlanmış iş yok.</div>
+        ) : (
+          <div className="space-y-5">
+            {agenda.map(({ tarih, gunIsler }) => {
+              const bugunMu = ayniGun(tarih, bugun);
+              return (
+                <div key={tarih.toISOString()}>
+                  <div className="mb-2 flex items-center gap-2">
+                    <span className={`flex h-9 w-9 flex-col items-center justify-center rounded-lg text-sm font-bold ${bugunMu ? "bg-brand-500 text-white" : "bg-white text-stone-700 ring-1 ring-stone-200"}`}>
+                      {tarih.getDate()}
+                    </span>
+                    <span className="text-sm font-medium text-stone-600">
+                      {GUN_ISIMLERI[(tarih.getDay() + 6) % 7]} · {AY_ISIMLERI[tarih.getMonth()]}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    {gunIsler.map((is) => (
+                      <Link key={is.id} href={`/panel/isler/${is.id}`} className={`card flex items-center justify-between gap-3 border-l-4 p-3 transition hover:border-brand-200 ${DURUM_RENK[is.durum] || ""}`}>
+                        <div className="min-w-0">
+                          <div className="truncate font-semibold text-stone-900">{is.baslik}</div>
+                          <div className="mt-0.5 text-xs text-stone-500">{saatStr(is.baslangic)}{is.musteriler?.ad ? ` · ${is.musteriler.ad}` : ""}</div>
+                        </div>
+                        <span className={`badge shrink-0 ${TIP_RENK[is.tip] || TIP_RENK.diger}`}>{TIP_LABEL[is.tip] || is.tip}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )
+      )}
+
+      {/* Takvim Grid (Ay görünümü) */}
+      {gorunum === "ay" && (
+      <div className="card overflow-x-auto">
         {/* Gün başlıkları */}
-        <div className="grid grid-cols-7 border-b border-stone-200">
+        <div className="grid min-w-[640px] grid-cols-7 border-b border-stone-200">
           {GUN_ISIMLERI.map((g) => (
             <div key={g} className="px-2 py-2 text-center text-xs font-semibold uppercase tracking-wide text-stone-500">
               {g}
@@ -128,7 +180,7 @@ export function TakvimClient({ isler }: { isler: IsWithMusteri[] }) {
         </div>
 
         {/* Günler */}
-        <div className="grid grid-cols-7">
+        <div className="grid min-w-[640px] grid-cols-7">
           {gunler.map(({ tarih, buAy }, idx) => {
             const bugunMu = ayniGun(tarih, bugun);
             const gununIsleri = isler.filter((is) => gundeIs(is, tarih));
@@ -181,6 +233,7 @@ export function TakvimClient({ isler }: { isler: IsWithMusteri[] }) {
           })}
         </div>
       </div>
+      )}
 
       {/* Renk Açıklamaları */}
       <div className="mt-4 flex flex-wrap gap-3 text-xs text-stone-500">

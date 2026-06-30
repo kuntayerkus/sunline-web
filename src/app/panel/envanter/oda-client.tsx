@@ -214,7 +214,29 @@ export function OdaSayfasi({ odalar }: { odalar: StudyoOda[] }) {
           </button>
         </EmptyState>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        {/* Mobil: kartlar */}
+        <div className="space-y-2.5 md:hidden">
+          {odalar.map((o) => (
+            <div key={o.id} className="card flex items-start justify-between gap-3 p-3">
+              <div className="min-w-0">
+                <div className="truncate font-semibold text-stone-900">{o.ad}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                  <span className={`badge ring-1 ${tipRenk[o.tip]}`}>{tipLabel[o.tip]}</span>
+                  <span className={`badge ring-1 ${o.aktif ? "bg-emerald-50 text-emerald-700 ring-emerald-200" : "bg-stone-100 text-stone-500 ring-stone-200"}`}>{o.aktif ? "Aktif" : "Pasif"}</span>
+                </div>
+                <div className="mt-1 text-sm text-stone-600">{paraTL(o.saatlik_ucret)}<span className="text-xs text-stone-400">/saat</span> · {paraTL(o.gunluk_ucret)}<span className="text-xs text-stone-400">/gün</span></div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <button onClick={() => acDuzenle(o)} className="btn-ghost btn-sm px-1.5" aria-label="Düzenle"><Pencil size={15} /></button>
+                <button onClick={() => setSilinecekId(o.id)} className="btn-ghost btn-sm px-1.5 text-red-500" aria-label="Sil"><Trash2 size={15} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Masaüstü: tablo */}
+        <div className="hidden overflow-x-auto md:block">
           <table className="tbl">
             <thead>
               <tr>
@@ -253,7 +275,7 @@ export function OdaSayfasi({ odalar }: { odalar: StudyoOda[] }) {
                     </span>
                   </td>
                   <td className="text-right">
-                    <div className="flex items-center justify-end gap-1 opacity-0 transition group-hover:opacity-100">
+                    <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => acDuzenle(o)}
                         className="btn-ghost btn-sm"
@@ -275,6 +297,7 @@ export function OdaSayfasi({ odalar }: { odalar: StudyoOda[] }) {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       <OdaFormu open={formAcik} onClose={kapatForm} oda={duzenlenen} />

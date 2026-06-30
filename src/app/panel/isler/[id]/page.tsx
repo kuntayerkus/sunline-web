@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { paraTL, tarihAralik } from "@/lib/format";
-import { ArrowLeft, FileText } from "lucide-react";
+import { ArrowLeft, FileText, MessageCircle } from "lucide-react";
+import { whatsappTo } from "@/lib/site";
 // Basit Client Wrapper'lar ekleme modal'ını açmak için
 import { DetayAtamaModallari } from "./modallar-wrapper";
 
@@ -13,11 +14,13 @@ export default async function IsDetayPage({ params }: { params: Promise<{ id: st
 
   const { data: is } = await supabase
     .from("isler")
-    .select("*, musteriler(ad)")
+    .select("*, musteriler(ad, telefon)")
     .eq("id", id)
     .single();
 
   if (!is) notFound();
+
+  const musteri = is.musteriler as { ad: string; telefon: string | null } | null;
 
   const [
     { data: isEkipman },
@@ -41,9 +44,21 @@ export default async function IsDetayPage({ params }: { params: Promise<{ id: st
         <Link href="/panel/isler" className="inline-flex items-center gap-1 text-sm font-medium text-stone-500 hover:text-stone-900">
           <ArrowLeft size={16} /> İşlere Dön
         </Link>
-        <a href={`/teklif/${is.id}`} target="_blank" rel="noopener noreferrer" className="btn-outline btn-sm">
-          <FileText size={15} /> Teklif / Sözleşme
-        </a>
+        <div className="flex items-center gap-2">
+          {musteri?.telefon && (
+            <a
+              href={whatsappTo(musteri.telefon, `Merhaba${musteri.ad ? " " + musteri.ad : ""}, ${is.baslik} hakkında yazıyorum. Sunline`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline btn-sm"
+            >
+              <MessageCircle size={15} /> WhatsApp
+            </a>
+          )}
+          <a href={`/teklif/${is.id}`} target="_blank" rel="noopener noreferrer" className="btn-outline btn-sm">
+            <FileText size={15} /> Teklif / Sözleşme
+          </a>
+        </div>
       </div>
 
       <PageHeader baslik={is.baslik} aciklama={`${is.tip} · ${is.durum}`} />

@@ -18,6 +18,11 @@ const bricolage = Bricolage_Grotesque({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  appleWebApp: {
+    capable: true,
+    title: "Sunline",
+    statusBarStyle: "black-translucent",
+  },
   title: 'Sunline | İzmir Premium Kayıt Stüdyosu ve Backline Kiralama',
   description: 'İzmir\'in en iyi premium kayıt stüdyosu ve profesyonel backline (konser ve festival ekipmanı) kiralama şirketi. Üst düzey müzik prodüksiyonu ve etkinlik çözümleri.',
   keywords: [

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   CalendarDays,
+  CalendarSearch,
   ClipboardList,
   Boxes,
   Users,
@@ -28,6 +29,7 @@ type NavItem = {
 const NAV: NavItem[] = [
   { href: "/panel", etiket: "Genel Bakış", icon: LayoutDashboard },
   { href: "/panel/takvim", etiket: "Takvim", icon: CalendarDays },
+  { href: "/panel/musaitlik", etiket: "Müsaitlik", icon: CalendarSearch },
   { href: "/panel/isler", etiket: "İşler", icon: ClipboardList },
   { href: "/panel/envanter", etiket: "Envanter", icon: Boxes },
   { href: "/panel/kisiler", etiket: "Kişiler", icon: Users },

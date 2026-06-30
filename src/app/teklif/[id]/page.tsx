@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, MessageCircle } from "lucide-react";
 import { gerekliOturum } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { paraTL, tarihAralik } from "@/lib/format";
+import { whatsappTo } from "@/lib/site";
 import { YazdirButton } from "./yazdir-button";
 import { TeklifBelge, type EkipmanSatir, type OdaSatir, type BelgeTipi } from "./teklif-belge";
 
@@ -29,6 +31,8 @@ export default async function TeklifPage({
 
   const musteri = is.musteriler as { ad: string; telefon: string | null; eposta: string | null } | null;
 
+  const waMesaj = `Merhaba${musteri?.ad ? " " + musteri.ad : ""},\n${is.baslik} için ${belgeTipi === "sozlesme" ? "sözleşme" : "teklif"} özeti:\nTarih: ${tarihAralik(is.baslangic, is.bitis)}\nToplam: ${paraTL(is.tutar)} (Kapora: ${paraTL(is.kapora)})\n\nSunline`;
+
   const sekme = (hedef: BelgeTipi, etiket: string) => (
     <Link
       href={`/teklif/${id}${hedef === "sozlesme" ? "?tip=sozlesme" : ""}`}
@@ -54,6 +58,11 @@ export default async function TeklifPage({
             {sekme("teklif", "Teklif")}
             {sekme("sozlesme", "Sözleşme")}
           </div>
+          {musteri?.telefon && (
+            <a href={whatsappTo(musteri.telefon, waMesaj)} target="_blank" rel="noopener noreferrer" className="btn-outline btn-sm">
+              <MessageCircle size={16} /> WhatsApp
+            </a>
+          )}
           <YazdirButton />
         </div>
       </div>

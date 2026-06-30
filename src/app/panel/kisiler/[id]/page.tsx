@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, Phone, Mail, ClipboardList } from "lucide-react";
+import { ArrowLeft, Phone, Mail, ClipboardList, MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { whatsappTo } from "@/lib/site";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
 import { paraTL, tarihAralik } from "@/lib/format";
@@ -58,6 +59,11 @@ export default async function MusteriDetayPage({ params }: { params: Promise<{ i
           {m.telefon && (
             <a href={`tel:${m.telefon}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600">
               <Phone size={15} /> {m.telefon}
+            </a>
+          )}
+          {m.telefon && (
+            <a href={whatsappTo(m.telefon, `Merhaba${m.ad ? " " + m.ad : ""}, Sunline`)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-medium text-emerald-600">
+              <MessageCircle size={15} /> WhatsApp
             </a>
           )}
           {m.eposta && (

@@ -211,7 +211,30 @@ export function HizmetSayfasi({ hizmetler }: { hizmetler: Hizmet[] }) {
           </button>
         </EmptyState>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        {/* Mobil: kartlar */}
+        <div className="space-y-2.5 md:hidden">
+          {hizmetler.map((h) => (
+            <div key={h.id} className="card flex items-start justify-between gap-3 p-3">
+              <div className="min-w-0">
+                <div className="truncate font-semibold text-stone-900">{h.ad}</div>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                  <span className={`badge ring-1 ${kategoriRenk[h.kategori]}`}>{kategoriLabel[h.kategori]}</span>
+                  <span className="badge bg-stone-100 text-stone-600">{birimLabel[h.birim]}</span>
+                  {!h.aktif && <span className="badge bg-stone-100 text-stone-500">Pasif</span>}
+                </div>
+                <div className="mt-1 text-sm font-medium text-stone-700">{paraTL(h.birim_ucret)}</div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <button onClick={() => acDuzenle(h)} className="btn-ghost btn-sm px-1.5" aria-label="Düzenle"><Pencil size={15} /></button>
+                <button onClick={() => setSilinecekId(h.id)} className="btn-ghost btn-sm px-1.5 text-red-500" aria-label="Sil"><Trash2 size={15} /></button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Masaüstü: tablo */}
+        <div className="hidden overflow-x-auto md:block">
           <table className="tbl">
             <thead>
               <tr>
@@ -252,7 +275,7 @@ export function HizmetSayfasi({ hizmetler }: { hizmetler: Hizmet[] }) {
                     </span>
                   </td>
                   <td className="text-right">
-                    <div className="flex items-center justify-end gap-1 opacity-0 transition group-hover:opacity-100">
+                    <div className="flex items-center justify-end gap-1">
                       <button
                         onClick={() => acDuzenle(h)}
                         className="btn-ghost btn-sm"
@@ -274,6 +297,7 @@ export function HizmetSayfasi({ hizmetler }: { hizmetler: Hizmet[] }) {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       <HizmetFormu open={formAcik} onClose={kapatForm} hizmet={duzenlenen} />
