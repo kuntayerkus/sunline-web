@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { Topbar } from "@/components/topbar";
+import { BottomNav } from "@/components/bottom-nav";
 import type { Rol } from "@/lib/types";
 
 export function Shell({
@@ -39,15 +40,14 @@ export function Shell({
       )}
 
       <div className="lg:pl-64">
-        <Topbar
-          adSoyad={adSoyad}
-          email={email}
-          onMenu={() => setMobilAcik(true)}
-        />
-        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <Topbar adSoyad={adSoyad} email={email} />
+        <main className="mx-auto max-w-7xl px-4 pb-28 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-6">
           {children}
         </main>
       </div>
+
+      {/* Mobil alt navigasyon */}
+      <BottomNav onMenu={() => setMobilAcik(true)} />
     </div>
   );
 }

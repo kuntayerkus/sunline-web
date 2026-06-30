@@ -48,7 +48,42 @@ export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWith
       {isler.length === 0 ? (
         <EmptyState icon={CalendarDays} baslik="Henüz iş kaydı yok" aciklama="Yeni iş ekleyerek başlayın." />
       ) : (
-        <div className="card overflow-x-auto">
+        <>
+        {/* Mobil: kart listesi (tablo yerine, telefonda kolay) */}
+        <div className="space-y-3 md:hidden">
+          {isler.map((is) => (
+            <div key={is.id} className="card p-4">
+              <div className="flex items-start justify-between gap-3">
+                <Link href={`/panel/isler/${is.id}`} className="font-semibold leading-snug text-brand-700">
+                  {is.baslik}
+                </Link>
+                <span className="shrink-0 font-semibold text-stone-900">{paraTL(is.tutar)}</span>
+              </div>
+              <div className="mt-0.5 text-sm text-stone-500">{is.musteriler?.ad || "—"}</div>
+              <div className="mt-2 flex items-center gap-1.5 text-sm text-stone-600">
+                <CalendarDays size={15} className="shrink-0 text-stone-400" />
+                <span>{tarihAralik(is.baslangic, is.bitis)}</span>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <div className="flex flex-wrap gap-1.5">
+                  <span className={`badge ${TIP_RENK[is.tip] || TIP_RENK.diger}`}>{is.tip}</span>
+                  <span className={`badge ${DURUM_RENK[is.durum] || ""}`}>{is.durum}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button onClick={() => { setDuzenlenen(is); setFormAcik(true); }} className="btn-ghost btn-sm px-2" aria-label="Düzenle">
+                    <Edit2 size={16} />
+                  </button>
+                  <button onClick={() => setSilinecekId(is.id)} className="btn-ghost btn-sm px-2 text-red-600" aria-label="Sil">
+                    <Trash2 size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Masaüstü: tablo */}
+        <div className="card overflow-x-auto hidden md:block">
           <table className="tbl">
             <thead>
               <tr>
@@ -93,6 +128,7 @@ export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWith
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       {(formAcik || duzenlenen) && (

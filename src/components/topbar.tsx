@@ -1,18 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, LogOut, User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { SunlineLogo } from "@/components/logo";
 
 export function Topbar({
   adSoyad,
   email,
-  onMenu,
 }: {
   adSoyad: string;
   email: string | null;
-  onMenu: () => void;
 }) {
   const router = useRouter();
   const [cikisYapiliyor, setCikisYapiliyor] = useState(false);
@@ -27,13 +27,10 @@ export function Topbar({
 
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b border-stone-200 bg-white/80 px-4 backdrop-blur">
-      <button
-        onClick={onMenu}
-        className="btn-ghost h-9 w-9 px-0 lg:hidden"
-        aria-label="Menü"
-      >
-        <Menu size={20} />
-      </button>
+      {/* Mobilde marka (masaüstünde logo kenar menüde) */}
+      <Link href="/panel" className="lg:hidden" aria-label="Sunline panel">
+        <SunlineLogo />
+      </Link>
 
       <div className="ml-auto flex items-center gap-3">
         <div className="hidden text-right sm:block">
