@@ -9,6 +9,7 @@ import {
   Boxes,
   Users,
   Wallet,
+  CalendarCheck,
   StickyNote,
   Settings,
   type LucideIcon,
@@ -30,6 +31,7 @@ const NAV: NavItem[] = [
   { href: "/panel/envanter", etiket: "Envanter", icon: Boxes },
   { href: "/panel/kisiler", etiket: "Kişiler", icon: Users },
   { href: "/panel/mali", etiket: "Mali", icon: Wallet, sadecePatron: true },
+  { href: "/panel/puantaj", etiket: "Puantaj", icon: CalendarCheck, sadecePatron: true },
   { href: "/panel/notlar", etiket: "Notlar", icon: StickyNote },
   { href: "/panel/ayarlar", etiket: "Ayarlar", icon: Settings, sadecePatron: true },
 ];

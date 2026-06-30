@@ -76,7 +76,40 @@ export function MusteriListesi({ musteriler }: { musteriler: Musteri[] }) {
         </button>
       </div>
 
-      <div className="card overflow-hidden">
+      {/* Mobil: kartlar (telefon/e-posta dokunulabilir) */}
+      <div className="space-y-2.5 md:hidden">
+        {musteriler.map((m) => (
+          <div key={m.id} className="card p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="truncate font-semibold text-stone-900">{m.ad}</div>
+                <span className={`badge ${tipRenk[m.tip]} mt-1`}>{tipLabel[m.tip]}</span>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <button className="btn-ghost btn-sm px-1.5" aria-label="Düzenle" onClick={() => acDuzenle(m)}><Pencil size={15} /></button>
+                <button className="btn-ghost btn-sm px-1.5 text-red-500" aria-label="Sil" onClick={() => setSilId(m.id)}><Trash2 size={15} /></button>
+              </div>
+            </div>
+            {(m.telefon || m.eposta) && (
+              <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1.5">
+                {m.telefon && (
+                  <a href={`tel:${m.telefon}`} className="inline-flex items-center gap-1.5 text-sm font-medium text-brand-600">
+                    <Phone size={14} /> {m.telefon}
+                  </a>
+                )}
+                {m.eposta && (
+                  <a href={`mailto:${m.eposta}`} className="inline-flex items-center gap-1.5 text-sm text-stone-600">
+                    <Mail size={14} className="text-stone-400" /> {m.eposta}
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Masaüstü: tablo */}
+      <div className="card hidden overflow-hidden md:block">
         <table className="tbl">
           <thead>
             <tr>

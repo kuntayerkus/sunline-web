@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { HardHat, Pencil, Trash2, Plus } from "lucide-react";
+import { HardHat, Pencil, Trash2, Plus, Phone } from "lucide-react";
 import type { Ekip } from "@/lib/types";
 import { paraTL } from "@/lib/format";
 import { Modal } from "@/components/modal";
@@ -61,7 +61,34 @@ export function EkipListesi({ ekipUyeleri }: { ekipUyeleri: Ekip[] }) {
         </button>
       </div>
 
-      <div className="card overflow-hidden">
+      {/* Mobil: kartlar */}
+      <div className="space-y-2.5 md:hidden">
+        {ekipUyeleri.map((e) => (
+          <div key={e.id} className="card p-3">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="truncate font-semibold text-stone-900">{e.ad}</span>
+                  <span className={`badge ${e.aktif ? "bg-green-50 text-green-700" : "bg-stone-100 text-stone-500"}`}>{e.aktif ? "Aktif" : "Pasif"}</span>
+                </div>
+                <div className="mt-0.5 text-xs text-stone-500">{e.uzmanlik || "—"} · {paraTL(e.gunluk_ucret)}/gün</div>
+              </div>
+              <div className="flex shrink-0 items-center gap-1">
+                <button className="btn-ghost btn-sm px-1.5" aria-label="Düzenle" onClick={() => acDuzenle(e)}><Pencil size={15} /></button>
+                <button className="btn-ghost btn-sm px-1.5 text-red-500" aria-label="Sil" onClick={() => setSilId(e.id)}><Trash2 size={15} /></button>
+              </div>
+            </div>
+            {e.telefon && (
+              <a href={`tel:${e.telefon}`} className="mt-2 inline-flex items-center gap-1.5 text-sm font-medium text-brand-600">
+                <Phone size={14} /> {e.telefon}
+              </a>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Masaüstü: tablo */}
+      <div className="card hidden overflow-hidden md:block">
         <table className="tbl">
           <thead>
             <tr>

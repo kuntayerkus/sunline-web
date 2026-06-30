@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { Plus, Package, Pencil, Trash2 } from "lucide-react";
+import { Plus, Package, Pencil, Trash2, Wrench } from "lucide-react";
 import { Modal } from "@/components/modal";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/empty-state";
@@ -206,10 +206,19 @@ function EkipmanFormu({
 
 /* ── Liste Bileşeni ────────────────────────────────────────── */
 
+const DURUM_FILTRELER: { key: "hepsi" | EnvanterDurum; label: string }[] = [
+  { key: "hepsi", label: "Tümü" },
+  { key: "aktif", label: "Aktif" },
+  { key: "bakimda", label: "Bakımda" },
+  { key: "arizali", label: "Arızalı" },
+  { key: "elden_cikti", label: "Elden Çıktı" },
+];
+
 export function EnvanterSayfasi({ ekipmanlar }: { ekipmanlar: Envanter[] }) {
   const [formAcik, setFormAcik] = useState(false);
   const [duzenlenen, setDuzenlenen] = useState<Envanter | undefined>();
   const [silinecekId, setSilinecekId] = useState<string | null>(null);
+  const [filtre, setFiltre] = useState<"hepsi" | EnvanterDurum>("hepsi");
   const [, startTransition] = useTransition();
 
   function acDuzenle(e: Envanter) {
@@ -235,13 +244,44 @@ export function EnvanterSayfasi({ ekipmanlar }: { ekipmanlar: Envanter[] }) {
     });
   }
 
+  const bakimSayisi = ekipmanlar.filter((e) => e.durum === "bakimda" || e.durum === "arizali").length;
+  const liste = filtre === "hepsi" ? ekipmanlar : ekipmanlar.filter((e) => e.durum === filtre);
+
   return (
     <>
-      <div className="mb-4 flex justify-end">
-        <button onClick={acYeni} className="btn-primary btn-sm">
+      <div className="mb-4 flex items-center justify-between gap-2">
+        {/* Bakım takibi uyarısı */}
+        {bakimSayisi > 0 ? (
+          <button
+            onClick={() => setFiltre("bakimda")}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 px-3 py-1.5 text-sm font-medium text-amber-700 ring-1 ring-amber-200"
+          >
+            <Wrench size={15} /> {bakimSayisi} ekipman bakımda/arızalı
+          </button>
+        ) : <span />}
+        <button onClick={acYeni} className="btn-primary btn-sm shrink-0">
           <Plus size={16} />
           Ekipman Ekle
         </button>
+      </div>
+
+      {/* Durum filtreleri */}
+      <div className="mb-4 flex gap-2 overflow-x-auto pb-1">
+        {DURUM_FILTRELER.map((f) => {
+          const sayi = f.key === "hepsi" ? ekipmanlar.length : ekipmanlar.filter((e) => e.durum === f.key).length;
+          const aktif = filtre === f.key;
+          return (
+            <button
+              key={f.key}
+              onClick={() => setFiltre(f.key)}
+              className={`shrink-0 rounded-full px-3 py-1.5 text-sm font-medium transition ${
+                aktif ? "bg-brand-500 text-white" : "bg-white text-stone-600 ring-1 ring-stone-200 hover:bg-stone-50"
+              }`}
+            >
+              {f.label} <span className={aktif ? "text-white/80" : "text-stone-400"}>{sayi}</span>
+            </button>
+          );
+        })}
       </div>
 
       {ekipmanlar.length === 0 ? (
@@ -255,68 +295,88 @@ export function EnvanterSayfasi({ ekipmanlar }: { ekipmanlar: Envanter[] }) {
             Ekipman Ekle
           </button>
         </EmptyState>
+      ) : liste.length === 0 ? (
+        <EmptyState icon={Package} baslik="Bu durumda ekipman yok" aciklama="Farklı bir filtre seçin." />
       ) : (
-        <div className="overflow-x-auto">
-          <table className="tbl">
-            <thead>
-              <tr>
-                <th>Ad</th>
-                <th>Kategori</th>
-                <th>Marka / Model</th>
-                <th>Takip</th>
-                <th className="text-center">Adet</th>
-                <th className="text-right">Günlük Ücret</th>
-                <th className="text-center">Durum</th>
-                <th className="text-right">İşlem</th>
-              </tr>
-            </thead>
-            <tbody>
-              {ekipmanlar.map((e) => (
-                <tr key={e.id} className="group">
-                  <td className="font-medium text-stone-900">{e.ad}</td>
-                  <td className="text-stone-500">{e.kategori ?? "—"}</td>
-                  <td className="text-stone-500">
-                    {[e.marka, e.model].filter(Boolean).join(" ") || "—"}
-                  </td>
-                  <td>
+        <>
+          {/* Mobil: kartlar */}
+          <div className="space-y-2.5 md:hidden">
+            {liste.map((e) => (
+              <div key={e.id} className="card flex items-start justify-between gap-3 p-3">
+                <div className="min-w-0">
+                  <div className="truncate font-semibold text-stone-900">{e.ad}</div>
+                  <div className="mt-0.5 truncate text-xs text-stone-500">
+                    {[e.kategori, [e.marka, e.model].filter(Boolean).join(" ")].filter(Boolean).join(" · ") || "—"}
+                  </div>
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <span className={`badge ring-1 ${durumRenk[e.durum]}`}>{durumLabel[e.durum]}</span>
                     <span className="badge bg-stone-100 text-stone-600">
-                      {e.takip === "tekil" ? "Tekil" : "Adet"}
+                      {e.takip === "tekil" ? "Tekil" : `${e.adet} adet`}
                     </span>
-                  </td>
-                  <td className="text-center">{e.adet}</td>
-                  <td className="text-right font-medium tabular-nums">
-                    {paraTL(e.gunluk_ucret)}
-                  </td>
-                  <td className="text-center">
-                    <span
-                      className={`badge ring-1 ${durumRenk[e.durum]}`}
-                    >
-                      {durumLabel[e.durum]}
-                    </span>
-                  </td>
-                  <td className="text-right">
-                    <div className="flex items-center justify-end gap-1 opacity-0 transition group-hover:opacity-100">
-                      <button
-                        onClick={() => acDuzenle(e)}
-                        className="btn-ghost btn-sm"
-                        title="Düzenle"
-                      >
-                        <Pencil size={15} />
-                      </button>
-                      <button
-                        onClick={() => setSilinecekId(e.id)}
-                        className="btn-ghost btn-sm text-red-500 hover:text-red-700"
-                        title="Sil"
-                      >
-                        <Trash2 size={15} />
-                      </button>
-                    </div>
-                  </td>
+                    <span className="text-sm font-medium text-stone-700">{paraTL(e.gunluk_ucret)}<span className="text-xs font-normal text-stone-400">/gün</span></span>
+                  </div>
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <button onClick={() => acDuzenle(e)} className="btn-ghost btn-sm px-1.5" aria-label="Düzenle"><Pencil size={15} /></button>
+                  <button onClick={() => setSilinecekId(e.id)} className="btn-ghost btn-sm px-1.5 text-red-500" aria-label="Sil"><Trash2 size={15} /></button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Masaüstü: tablo */}
+          <div className="hidden overflow-x-auto md:block">
+            <table className="tbl">
+              <thead>
+                <tr>
+                  <th>Ad</th>
+                  <th>Kategori</th>
+                  <th>Marka / Model</th>
+                  <th>Takip</th>
+                  <th className="text-center">Adet</th>
+                  <th className="text-right">Günlük Ücret</th>
+                  <th className="text-center">Durum</th>
+                  <th className="text-right">İşlem</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {liste.map((e) => (
+                  <tr key={e.id} className="group">
+                    <td className="font-medium text-stone-900">{e.ad}</td>
+                    <td className="text-stone-500">{e.kategori ?? "—"}</td>
+                    <td className="text-stone-500">
+                      {[e.marka, e.model].filter(Boolean).join(" ") || "—"}
+                    </td>
+                    <td>
+                      <span className="badge bg-stone-100 text-stone-600">
+                        {e.takip === "tekil" ? "Tekil" : "Adet"}
+                      </span>
+                    </td>
+                    <td className="text-center">{e.adet}</td>
+                    <td className="text-right font-medium tabular-nums">
+                      {paraTL(e.gunluk_ucret)}
+                    </td>
+                    <td className="text-center">
+                      <span className={`badge ring-1 ${durumRenk[e.durum]}`}>
+                        {durumLabel[e.durum]}
+                      </span>
+                    </td>
+                    <td className="text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button onClick={() => acDuzenle(e)} className="btn-ghost btn-sm" title="Düzenle">
+                          <Pencil size={15} />
+                        </button>
+                        <button onClick={() => setSilinecekId(e.id)} className="btn-ghost btn-sm text-red-500 hover:text-red-700" title="Sil">
+                          <Trash2 size={15} />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
 
       {/* Form Modal */}

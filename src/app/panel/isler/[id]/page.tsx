@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { paraTL, tarihAralik } from "@/lib/format";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText } from "lucide-react";
 // Basit Client Wrapper'lar ekleme modal'ını açmak için
 import { DetayAtamaModallari } from "./modallar-wrapper";
 
@@ -37,10 +37,13 @@ export default async function IsDetayPage({ params }: { params: Promise<{ id: st
 
   return (
     <div>
-      <div className="mb-4">
+      <div className="mb-4 flex items-center justify-between gap-2">
         <Link href="/panel/isler" className="inline-flex items-center gap-1 text-sm font-medium text-stone-500 hover:text-stone-900">
           <ArrowLeft size={16} /> İşlere Dön
         </Link>
+        <a href={`/teklif/${is.id}`} target="_blank" rel="noopener noreferrer" className="btn-outline btn-sm">
+          <FileText size={15} /> Teklif / Sözleşme
+        </a>
       </div>
 
       <PageHeader baslik={is.baslik} aciklama={`${is.tip} · ${is.durum}`} />
