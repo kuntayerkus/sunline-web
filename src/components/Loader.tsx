@@ -8,7 +8,8 @@ const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffec
 export const playedLoaders = new Set<string>();
 
 export default function Loader({ text = "SUNLINE", duration = 2000 }: { text?: string; duration?: number }) {
-  const [phase, setPhase] = useState<"entering" | "holding" | "exiting" | "done">("entering");
+  const [loading, setLoading] = useState(true);
+  const [phase, setPhase] = useState<"entering" | "holding" | "exiting">("entering");
   const [hasPlayed, setHasPlayed] = useState(false);
 
   const letterCount = text.length;
@@ -19,7 +20,7 @@ export default function Loader({ text = "SUNLINE", duration = 2000 }: { text?: s
   useIsomorphicLayoutEffect(() => {
     if (playedLoaders.has(text)) {
       setHasPlayed(true);
-      setPhase("done");
+      setLoading(false);
       return;
     }
 
@@ -37,7 +38,7 @@ export default function Loader({ text = "SUNLINE", duration = 2000 }: { text?: s
 
     // Phase 3: fully done, unmount
     const doneTimer = setTimeout(() => {
-      setPhase("done");
+      setLoading(false);
     }, enterTime + holdTime + 800);
 
     return () => {
@@ -47,54 +48,53 @@ export default function Loader({ text = "SUNLINE", duration = 2000 }: { text?: s
     };
   }, [text, duration, enterTime, holdTime]);
 
-  if (hasPlayed || phase === "done") return null;
+  if (hasPlayed) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] overflow-hidden" style={{ perspective: "600px" }}>
-      <AnimatePresence>
-        {phase !== "done" && (
+    <AnimatePresence>
+      {loading && (
+        <motion.div
+          className="fixed inset-0 z-[100] bg-[var(--color-ink)] flex items-center justify-center overflow-hidden"
+          style={{ perspective: "600px" }}
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0, transition: { duration: 0.4, ease: "easeInOut" } }}
+        >
           <motion.div
-            className="absolute inset-0 bg-[var(--color-ink)] flex items-center justify-center"
-            initial={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.3, delay: 0.2 } }}
+            className="flex flex-wrap items-center justify-center text-[var(--color-paper)] font-display font-black tracking-tighter leading-none text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] px-4"
+            animate={
+              phase === "exiting"
+                ? { scale: 30, opacity: 0, z: 800 }
+                : { scale: 1, opacity: 1, z: 0 }
+            }
+            transition={
+              phase === "exiting"
+                ? { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const }
+                : { duration: 0.3 }
+            }
+            style={{ transformStyle: "preserve-3d" }}
           >
-            <motion.div
-              className="flex flex-wrap items-center justify-center text-[var(--color-paper)] font-display font-black tracking-tighter leading-none text-5xl sm:text-7xl md:text-[8rem] lg:text-[10rem] px-4"
-              animate={
-                phase === "exiting"
-                  ? { scale: 30, opacity: 0, z: 800 }
-                  : { scale: 1, opacity: 1, z: 0 }
-              }
-              transition={
-                phase === "exiting"
-                  ? { duration: 0.8, ease: [0.76, 0, 0.24, 1] as const }
-                  : { duration: 0.3 }
-              }
-              style={{ transformStyle: "preserve-3d" }}
-            >
-              {text.split("").map((char, index) => (
-                <motion.span
-                  key={index}
-                  className="inline-block origin-center"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={
-                    phase === "entering" || phase === "holding"
-                      ? { scale: 1, opacity: 1 }
-                      : {}
-                  }
-                  transition={{
-                    delay: index * staggerDuration,
-                    duration: 0.4,
-                    ease: [0.16, 1, 0.3, 1] as const,
-                  }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </motion.div>
+            {text.split("").map((char, index) => (
+              <motion.span
+                key={index}
+                className="inline-block origin-center"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={
+                  phase === "entering" || phase === "holding"
+                    ? { scale: 1, opacity: 1 }
+                    : {}
+                }
+                transition={{
+                  delay: index * staggerDuration,
+                  duration: 0.4,
+                  ease: [0.16, 1, 0.3, 1] as const,
+                }}
+              >
+                {char}
+              </motion.span>
+            ))}
           </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
