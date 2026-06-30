@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { PageHeader } from "@/components/page-header";
 import { IslerListesi } from "./isler-client";
-import type { Is, Musteri } from "@/lib/types";
+import type { Is, Musteri, Envanter } from "@/lib/types";
 
 type IsWithMusteri = Is & { 
   musteriler?: { ad: string } | null;
@@ -30,7 +30,7 @@ export default async function IslerPage() {
       <IslerListesi
         isler={(isler as IsWithMusteri[]) || []}
         musteriler={(musteriler as Musteri[]) || []}
-        envanterler={(envanterler as any) || []}
+        envanterler={(envanterler as Envanter[]) || []}
       />
     </div>
   );

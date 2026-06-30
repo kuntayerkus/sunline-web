@@ -1,8 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
+
+type CakismaSatir = {
+  envanter?: { ad: string } | null;
+  isler?: { baslik: string } | null;
+};
 
 const isSchema = z.object({
   baslik: z.string().min(1, "Başlık zorunludur"),
@@ -18,7 +24,7 @@ const isSchema = z.object({
 });
 
 async function checkEkipmanCakismasi(
-  supabase: any,
+  supabase: SupabaseClient,
   ekipmanIds: string[],
   baslangic: string,
   bitis: string,
@@ -42,7 +48,7 @@ async function checkEkipmanCakismasi(
   if (error) throw error;
 
   if (data && data.length > 0) {
-    const msgs = data.map((d: any) => `${d.envanter?.ad || 'Ekipman'} -> ${d.isler?.baslik || 'Başka İş'}`);
+    const msgs = (data as unknown as CakismaSatir[]).map((d) => `${d.envanter?.ad || 'Ekipman'} -> ${d.isler?.baslik || 'Başka İş'}`);
     // Tekilleştirme
     const uniqueMsgs = Array.from(new Set(msgs));
     return `Çakışma var! Aşağıdaki ekipmanlar belirtilen tarihlerde başka işlere atanmış:\n${uniqueMsgs.join("\n")}`;
@@ -73,7 +79,7 @@ export async function isEkle(formData: FormData) {
   if (seciliEkipmanlarStr) {
     try {
       seciliEkipmanlar = JSON.parse(seciliEkipmanlarStr);
-    } catch (e) {
+    } catch {
       // ignore parse error
     }
   }
@@ -125,7 +131,7 @@ export async function isGuncelle(id: string, formData: FormData) {
   if (seciliEkipmanlarStr) {
     try {
       seciliEkipmanlar = JSON.parse(seciliEkipmanlarStr);
-    } catch (e) {}
+    } catch {}
   }
 
   // Çakışma kontrolü
@@ -180,10 +186,11 @@ export async function ekipmanAta(isId: string, envanterId: string, adet: number)
   revalidatePath(`/panel/isler/${isId}`);
 }
 
-export async function ekipmanCikar(id: string) {
+export async function ekipmanCikar(id: string, isId?: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("is_ekipman").delete().eq("id", id);
   if (error) return { error: error.message };
+  if (isId) revalidatePath(`/panel/isler/${isId}`);
 }
 
 export async function odaAta(isId: string, odaId: string) {
@@ -196,10 +203,11 @@ export async function odaAta(isId: string, odaId: string) {
   revalidatePath(`/panel/isler/${isId}`);
 }
 
-export async function odaCikar(id: string) {
+export async function odaCikar(id: string, isId?: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("is_oda").delete().eq("id", id);
   if (error) return { error: error.message };
+  if (isId) revalidatePath(`/panel/isler/${isId}`);
 }
 
 export async function ekipAta(isId: string, ekipId: string, rol?: string) {
@@ -213,8 +221,9 @@ export async function ekipAta(isId: string, ekipId: string, rol?: string) {
   revalidatePath(`/panel/isler/${isId}`);
 }
 
-export async function ekipCikar(id: string) {
+export async function ekipCikar(id: string, isId?: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("is_ekip").delete().eq("id", id);
   if (error) return { error: error.message };
+  if (isId) revalidatePath(`/panel/isler/${isId}`);
 }

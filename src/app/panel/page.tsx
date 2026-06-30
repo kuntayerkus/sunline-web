@@ -87,7 +87,10 @@ export default async function DashboardPage() {
                   <p className="text-xs text-stone-500">
                     {new Date(is.baslangic).toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})} - 
                     {new Date(is.bitis).toLocaleTimeString('tr-TR', {hour: '2-digit', minute:'2-digit'})}
-                    {((is.musteriler as any)?.ad) && ` • ${((is.musteriler as any).ad)}`}
+                    {(() => {
+                      const m = is.musteriler as unknown as { ad: string } | null;
+                      return m?.ad ? ` • ${m.ad}` : null;
+                    })()}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">

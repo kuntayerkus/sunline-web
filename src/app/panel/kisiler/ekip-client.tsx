@@ -13,7 +13,7 @@ export function EkipListesi({ ekipUyeleri }: { ekipUyeleri: Ekip[] }) {
   const [formAcik, setFormAcik] = useState(false);
   const [duzenle, setDuzenle] = useState<Ekip | null>(null);
   const [silId, setSilId] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   function acDuzenle(e: Ekip) {
     setDuzenle(e);

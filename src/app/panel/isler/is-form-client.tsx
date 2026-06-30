@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { Modal } from "@/components/modal";
 import { isEkle, isGuncelle } from "./actions";
-import type { Is, Musteri } from "@/lib/types";
-import { saatStr } from "@/lib/format";
+import type { Is, Musteri, Envanter } from "@/lib/types";
+
+type IsDuzenle = Is & { is_ekipman?: { envanter_id: string; adet: number }[] };
 
 export function IsFormu({
   is,
@@ -12,9 +13,9 @@ export function IsFormu({
   envanterler,
   onClose,
 }: {
-  is?: any;
+  is?: IsDuzenle | null;
   musteriler: Musteri[];
-  envanterler: any[];
+  envanterler: Envanter[];
   onClose: () => void;
 }) {
   const [loading, setLoading] = useState(false);

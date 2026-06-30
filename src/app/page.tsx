@@ -56,7 +56,7 @@ export default function Home() {
           >
             <div className="tag-volt self-start md:self-auto">İzmir, Alsancak</div>
             <p className="text-xl max-w-lg font-light text-stone-300">
-              Premium stüdyo atmosferinden en büyük festival sahnelerine. Ege'nin en güçlü backline envanteriyle her performansa hazır olun.
+              Premium stüdyo atmosferinden en büyük festival sahnelerine. Ege&apos;nin en güçlü backline envanteriyle her performansa hazır olun.
             </p>
           </motion.div>
         </div>
@@ -76,14 +76,14 @@ export default function Home() {
               SAHNEDE<br/>DEV GÜÇ<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
             </h2>
             <p className="text-lg md:text-xl font-medium opacity-80 mt-4">
-              Festivaller, turneler ve özel etkinlikler için Ege Bölgesi'nin en geniş ve bakımlı premium backline envanteri. Tam zamanında, eksiksiz kurulum.
+              Festivaller, turneler ve özel etkinlikler için Ege Bölgesi&apos;nin en geniş ve bakımlı premium backline envanteri. Tam zamanında, eksiksiz kurulum.
             </p>
             
             {/* EEAT İçerik Bloğu - AEO / GEO Optimize Edildi */}
             <div className="mt-6 p-8 border-l-4 border-[var(--color-flare)] bg-stone-100 flex flex-col gap-4">
               <h3 className="font-bold text-lg font-display uppercase tracking-wider">Sanatçının Dilinden Anlayan Backline</h3>
               <p className="text-sm md:text-base opacity-80 font-medium leading-relaxed">
-                Biz sadece ekipman sağlamıyoruz; kendimiz de sanatçı olduğumuz için sahnenin ruhunu ve sanatçının ihtiyaçlarını çok iyi anlıyoruz. Gipsy Kings, Volkan Öktem, Yüksek Sadakat, Kibariye ve Monica Molina gibi dünya çapındaki devlerin rider'larını zamanından önce, eksiksiz ve sıfır problemle kuruyoruz. DW Collector's, Nord Stage 3, Kemper ve Yamaha Montage gibi paha biçilemez ekipmanlarımıza gözümüz gibi bakıyor, sanatçı gelmeden önce isteğe göre kişiselleştiriyoruz.
+                Biz sadece ekipman sağlamıyoruz; kendimiz de sanatçı olduğumuz için sahnenin ruhunu ve sanatçının ihtiyaçlarını çok iyi anlıyoruz. Gipsy Kings, Volkan Öktem, Yüksek Sadakat, Kibariye ve Monica Molina gibi dünya çapındaki devlerin rider&apos;larını zamanından önce, eksiksiz ve sıfır problemle kuruyoruz. DW Collector&apos;s, Nord Stage 3, Kemper ve Yamaha Montage gibi paha biçilemez ekipmanlarımıza gözümüz gibi bakıyor, sanatçı gelmeden önce isteğe göre kişiselleştiriyoruz.
               </p>
             </div>
 
@@ -111,7 +111,7 @@ export default function Home() {
               SESİN BURADA<br/>BAŞLAR<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
             </h2>
             <p className="text-lg md:text-xl font-light opacity-80 mt-4">
-              İzmir'in en iyi ve en donanımlı stüdyosu. İnce mühendislikle tasarlanmış mükemmel akustik, eşi benzeri olmayan analog hardware ve hiçbir saniyesi ziyan edilmeyen konforlu bir üretim alanı.
+              İzmir&apos;in en iyi ve en donanımlı stüdyosu. İnce mühendislikle tasarlanmış mükemmel akustik, eşi benzeri olmayan analog hardware ve hiçbir saniyesi ziyan edilmeyen konforlu bir üretim alanı.
             </p>
             
             <div className="mt-4 grid grid-cols-2 gap-4">

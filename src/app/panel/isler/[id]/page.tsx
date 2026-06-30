@@ -4,14 +4,12 @@ import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
 import { paraTL, tarihAralik } from "@/lib/format";
 import { ArrowLeft } from "lucide-react";
-import { EkipmanAtamaFormu, OdaAtamaFormu, EkipAtamaFormu, AtamaSilButonu } from "./detay-client";
-
 // Basit Client Wrapper'lar ekleme modal'ını açmak için
 import { DetayAtamaModallari } from "./modallar-wrapper";
 
-export default async function IsDetayPage({ params }: { params: { id: string } }) {
+export default async function IsDetayPage({ params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient();
-  const { id } = params; // Fixes issue with awaited params
+  const { id } = await params; // Next 16: params bir Promise, await edilmeli
 
   const { data: is } = await supabase
     .from("isler")

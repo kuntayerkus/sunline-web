@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import type { Envanter, StudyoOda, Ekip } from "@/lib/types";
 import { EkipmanAtamaFormu, OdaAtamaFormu, EkipAtamaFormu, AtamaSilButonu } from "./detay-client";
+
+type IsEkipmanSatir = { id: string; adet: number; envanter?: { ad: string } | null };
+type IsOdaSatir = { id: string; studyo_oda?: { ad: string } | null };
+type IsEkipSatir = { id: string; rol: string | null; ekip?: { ad: string; uzmanlik: string | null } | null };
 
 export function DetayAtamaModallari({
   isId,
@@ -14,12 +19,12 @@ export function DetayAtamaModallari({
   ekipListesi,
 }: {
   isId: string;
-  isEkipman: any[];
-  isOda: any[];
-  isEkip: any[];
-  envanterListesi: any[];
-  odaListesi: any[];
-  ekipListesi: any[];
+  isEkipman: IsEkipmanSatir[];
+  isOda: IsOdaSatir[];
+  isEkip: IsEkipSatir[];
+  envanterListesi: Envanter[];
+  odaListesi: StudyoOda[];
+  ekipListesi: Ekip[];
 }) {
   const [modal, setModal] = useState<"ekipman" | "oda" | "ekip" | null>(null);
 
@@ -38,7 +43,7 @@ export function DetayAtamaModallari({
               {isEkipman.map(ie => (
                 <li key={ie.id} className="flex justify-between items-center text-sm p-2 bg-stone-50 rounded">
                   <span>{ie.envanter?.ad} <span className="text-stone-400">x{ie.adet}</span></span>
-                  <AtamaSilButonu id={ie.id} tip="ekipman" />
+                  <AtamaSilButonu id={ie.id} tip="ekipman" isId={isId} />
                 </li>
               ))}
             </ul>
@@ -59,7 +64,7 @@ export function DetayAtamaModallari({
               {isOda.map(io => (
                 <li key={io.id} className="flex justify-between items-center text-sm p-2 bg-stone-50 rounded">
                   <span>{io.studyo_oda?.ad}</span>
-                  <AtamaSilButonu id={io.id} tip="oda" />
+                  <AtamaSilButonu id={io.id} tip="oda" isId={isId} />
                 </li>
               ))}
             </ul>
@@ -80,7 +85,7 @@ export function DetayAtamaModallari({
               {isEkip.map(ie => (
                 <li key={ie.id} className="flex justify-between items-center text-sm p-2 bg-stone-50 rounded">
                   <span>{ie.ekip?.ad} <span className="text-stone-400">({ie.rol || ie.ekip?.uzmanlik || "Genel"})</span></span>
-                  <AtamaSilButonu id={ie.id} tip="ekip" />
+                  <AtamaSilButonu id={ie.id} tip="ekip" isId={isId} />
                 </li>
               ))}
             </ul>

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Plus, Edit2, Trash2, CalendarDays } from "lucide-react";
-import type { Is, Musteri } from "@/lib/types";
+import type { Is, Musteri, Envanter } from "@/lib/types";
 import { paraTL, tarihAralik } from "@/lib/format";
 import { ConfirmDialog } from "@/components/confirm-dialog";
 import { EmptyState } from "@/components/empty-state";
@@ -29,7 +29,7 @@ const TIP_RENK: Record<string, string> = {
   diger: "bg-stone-100 text-stone-600",
 };
 
-export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWithMusteri[], musteriler: Musteri[], envanterler: any[] }) {
+export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWithMusteri[], musteriler: Musteri[], envanterler: Envanter[] }) {
   const [formAcik, setFormAcik] = useState(false);
   const [duzenlenen, setDuzenlenen] = useState<Is | null>(null);
   const [silinecekId, setSilinecekId] = useState<string | null>(null);

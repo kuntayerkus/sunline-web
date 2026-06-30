@@ -111,7 +111,7 @@ export default function RootLayout({
     ],
     "areaServed": "İzmir, Turkey",
     "sameAs": [
-      "https://www.instagram.com/sunlinestudio"
+      "https://www.instagram.com/sunlinestudyo"
     ]
   };
 

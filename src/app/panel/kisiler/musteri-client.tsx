@@ -24,7 +24,7 @@ export function MusteriListesi({ musteriler }: { musteriler: Musteri[] }) {
   const [formAcik, setFormAcik] = useState(false);
   const [duzenle, setDuzenle] = useState<Musteri | null>(null);
   const [silId, setSilId] = useState<string | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   function acDuzenle(m: Musteri) {
     setDuzenle(m);

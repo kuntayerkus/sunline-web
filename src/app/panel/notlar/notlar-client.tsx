@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { StickyNote, Plus, Trash2, Pencil } from "lucide-react";
-import type { Not, NotIliskiTip } from "@/lib/types";
+import { StickyNote, Plus, Trash2 } from "lucide-react";
+import type { Not } from "@/lib/types";
 import { tarihKisa } from "@/lib/format";
 import { Modal } from "@/components/modal";
 import { EmptyState } from "@/components/empty-state";
@@ -276,7 +276,7 @@ export function NotKartlari({ notlar }: { notlar: Not[] }) {
   const [formAcik, setFormAcik] = useState(false);
   const [seciliNot, setSeciliNot] = useState<Not | null>(null);
   const [silmeNot, setSilmeNot] = useState<Not | null>(null);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   function handleYeniNot() {
     setSeciliNot(null);

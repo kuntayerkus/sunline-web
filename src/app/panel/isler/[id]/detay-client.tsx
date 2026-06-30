@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Modal } from "@/components/modal";
 import { ConfirmDialog } from "@/components/confirm-dialog";
+import type { Envanter, StudyoOda, Ekip } from "@/lib/types";
 import { ekipmanAta, ekipmanCikar, odaAta, odaCikar, ekipAta, ekipCikar } from "../actions";
 
-export function EkipmanAtamaFormu({ isId, envanterListesi, onClose }: { isId: string; envanterListesi: any[]; onClose: () => void }) {
+export function EkipmanAtamaFormu({ isId, envanterListesi, onClose }: { isId: string; envanterListesi: Envanter[]; onClose: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,7 +51,7 @@ export function EkipmanAtamaFormu({ isId, envanterListesi, onClose }: { isId: st
   );
 }
 
-export function OdaAtamaFormu({ isId, odaListesi, onClose }: { isId: string; odaListesi: any[]; onClose: () => void }) {
+export function OdaAtamaFormu({ isId, odaListesi, onClose }: { isId: string; odaListesi: StudyoOda[]; onClose: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -87,7 +88,7 @@ export function OdaAtamaFormu({ isId, odaListesi, onClose }: { isId: string; oda
   );
 }
 
-export function EkipAtamaFormu({ isId, ekipListesi, onClose }: { isId: string; ekipListesi: any[]; onClose: () => void }) {
+export function EkipAtamaFormu({ isId, ekipListesi, onClose }: { isId: string; ekipListesi: Ekip[]; onClose: () => void }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -128,9 +129,9 @@ export function EkipAtamaFormu({ isId, ekipListesi, onClose }: { isId: string; e
   );
 }
 
-export function AtamaSilButonu({ id, tip }: { id: string, tip: "ekipman" | "oda" | "ekip" }) {
+export function AtamaSilButonu({ id, tip, isId }: { id: string, tip: "ekipman" | "oda" | "ekip", isId?: string }) {
   const [silOnay, setSilOnay] = useState(false);
-  
+
   return (
     <>
       <button onClick={() => setSilOnay(true)} className="btn-ghost btn-sm px-2 text-red-600">
@@ -140,9 +141,9 @@ export function AtamaSilButonu({ id, tip }: { id: string, tip: "ekipman" | "oda"
         open={silOnay}
         onClose={() => setSilOnay(false)}
         onConfirm={async () => {
-          if (tip === "ekipman") await ekipmanCikar(id);
-          else if (tip === "oda") await odaCikar(id);
-          else if (tip === "ekip") await ekipCikar(id);
+          if (tip === "ekipman") await ekipmanCikar(id, isId);
+          else if (tip === "oda") await odaCikar(id, isId);
+          else if (tip === "ekip") await ekipCikar(id, isId);
         }}
         baslik="Atamayı Kaldır"
         mesaj="Bu atamayı kaldırmak istediğinize emin misiniz?"

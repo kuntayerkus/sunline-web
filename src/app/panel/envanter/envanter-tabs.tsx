@@ -7,12 +7,6 @@ import { EnvanterSayfasi } from "./envanter-client";
 import { OdaSayfasi } from "./oda-client";
 import { HizmetSayfasi } from "./hizmet-client";
 
-const TABS = [
-  { key: "ekipman", label: "Ekipman" },
-  { key: "oda", label: "Stüdyo Odaları" },
-  { key: "hizmet", label: "Hizmetler" },
-] as const;
-
 export function EnvanterTabs({
   ekipmanlar,
   odalar,
