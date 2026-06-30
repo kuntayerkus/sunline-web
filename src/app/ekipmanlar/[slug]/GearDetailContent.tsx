@@ -36,7 +36,7 @@ export default function GearDetailContent({ slug }: { slug: string }) {
               key={i}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: Math.min(i * 0.03, 0.4) }}
               className="border-b-2 border-[var(--color-ink)] pb-4 flex justify-between items-end group cursor-default"
             >
               <h2 className="text-xl md:text-2xl font-display font-bold tracking-tight group-hover:text-[var(--color-flare)] transition">

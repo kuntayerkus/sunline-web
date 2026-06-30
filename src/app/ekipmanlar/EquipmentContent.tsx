@@ -9,7 +9,7 @@ import { gearCategories } from "@/lib/gearData";
 export default function EquipmentContent() {
   return (
     <main className="min-h-screen bg-[var(--color-ink)] text-[var(--color-paper)] pt-32 px-6 pb-24">
-      <Loader text="EKİPMANLAR" duration={1000} />
+      <Loader text="EKİPMANLAR" duration={800} />
       <Navbar />
 
       <div className="max-w-6xl mx-auto">
@@ -31,7 +31,7 @@ export default function EquipmentContent() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: i * 0.1 }}
+                transition={{ delay: i * 0.06 }}
                 style={{
                   backgroundColor: cat.color,
                   color: cat.textColor || "var(--color-paper)",

@@ -16,17 +16,17 @@ export default function Home() {
 
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
 
-  // If the loader was already played this session, we skip the 2.2s delay for the hero text
+  // Loader bu oturumda zaten oynadıysa hero metni için beklemeyi atla.
   const [heroDelay] = useState(() => {
     if (typeof window !== "undefined") {
-      return playedLoaders.has("SUNLINE") ? 0.2 : 2.2;
+      return playedLoaders.has("SUNLINE") ? 0.1 : 1.4;
     }
-    return 2.2;
+    return 1.4;
   });
 
   return (
     <main className="relative bg-[var(--color-ink)]" ref={containerRef}>
-      <Loader />
+      <Loader duration={1400} />
       <Navbar />
 
       {/* Hero Section */}
