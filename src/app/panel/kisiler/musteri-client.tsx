@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Link from "next/link";
 import { Users, Pencil, Trash2, Plus, Phone, Mail } from "lucide-react";
 import type { Musteri, MusteriTip } from "@/lib/types";
 import { Modal } from "@/components/modal";
@@ -82,8 +83,8 @@ export function MusteriListesi({ musteriler }: { musteriler: Musteri[] }) {
           <div key={m.id} className="card p-3">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <div className="truncate font-semibold text-stone-900">{m.ad}</div>
-                <span className={`badge ${tipRenk[m.tip]} mt-1`}>{tipLabel[m.tip]}</span>
+                <Link href={`/panel/kisiler/${m.id}`} className="truncate font-semibold text-brand-700 hover:underline">{m.ad}</Link>
+                <div><span className={`badge ${tipRenk[m.tip]} mt-1`}>{tipLabel[m.tip]}</span></div>
               </div>
               <div className="flex shrink-0 items-center gap-1">
                 <button className="btn-ghost btn-sm px-1.5" aria-label="Düzenle" onClick={() => acDuzenle(m)}><Pencil size={15} /></button>
@@ -123,7 +124,7 @@ export function MusteriListesi({ musteriler }: { musteriler: Musteri[] }) {
           <tbody>
             {musteriler.map((m) => (
               <tr key={m.id}>
-                <td className="font-medium text-stone-900">{m.ad}</td>
+                <td><Link href={`/panel/kisiler/${m.id}`} className="font-medium text-brand-700 hover:underline">{m.ad}</Link></td>
                 <td>
                   <span className={`badge ${tipRenk[m.tip]}`}>
                     {tipLabel[m.tip]}

@@ -141,6 +141,19 @@ export type SabitGider = {
   updated_at: string;
 };
 
+export type Hatirlatma = {
+  id: string;
+  baslik: string;
+  aciklama: string | null;
+  tarih: string; // date (YYYY-MM-DD)
+  tamamlandi: boolean;
+  is_id: string | null;
+  musteri_id: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type NotIliskiTip = "is" | "envanter" | "musteri" | "genel";
 export type Not = {
   id: string;

@@ -4,11 +4,19 @@ import { ArrowLeft } from "lucide-react";
 import { gerekliOturum } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { YazdirButton } from "./yazdir-button";
-import { TeklifBelge, type EkipmanSatir, type OdaSatir } from "./teklif-belge";
+import { TeklifBelge, type EkipmanSatir, type OdaSatir, type BelgeTipi } from "./teklif-belge";
 
-export default async function TeklifPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function TeklifPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ tip?: string }>;
+}) {
   await gerekliOturum(); // yalnız girişli kullanıcı
   const { id } = await params;
+  const { tip } = await searchParams;
+  const belgeTipi: BelgeTipi = tip === "sozlesme" ? "sozlesme" : "teklif";
 
   const supabase = await createClient();
   const { data: is } = await supabase
@@ -21,16 +29,33 @@ export default async function TeklifPage({ params }: { params: Promise<{ id: str
 
   const musteri = is.musteriler as { ad: string; telefon: string | null; eposta: string | null } | null;
 
+  const sekme = (hedef: BelgeTipi, etiket: string) => (
+    <Link
+      href={`/teklif/${id}${hedef === "sozlesme" ? "?tip=sozlesme" : ""}`}
+      className={`rounded-lg px-3 py-1.5 text-sm font-medium transition ${
+        belgeTipi === hedef ? "bg-stone-900 text-white" : "bg-stone-100 text-stone-600 hover:bg-stone-200"
+      }`}
+    >
+      {etiket}
+    </Link>
+  );
+
   return (
     <div className="min-h-screen bg-white text-stone-900">
       <style>{`@page { size: A4; margin: 14mm; } @media print { .no-print { display: none !important; } body { -webkit-print-color-adjust: exact; print-color-adjust: exact; } }`}</style>
 
       {/* Araç çubuğu (yazdırmada gizli) */}
-      <div className="no-print sticky top-0 z-10 flex items-center justify-between gap-2 border-b border-stone-200 bg-white/90 px-4 py-3 backdrop-blur">
+      <div className="no-print sticky top-0 z-10 flex flex-wrap items-center justify-between gap-2 border-b border-stone-200 bg-white/90 px-4 py-3 backdrop-blur">
         <Link href={`/panel/isler/${id}`} className="inline-flex items-center gap-1 text-sm font-medium text-stone-500 hover:text-stone-900">
           <ArrowLeft size={16} /> İşe dön
         </Link>
-        <YazdirButton />
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1">
+            {sekme("teklif", "Teklif")}
+            {sekme("sozlesme", "Sözleşme")}
+          </div>
+          <YazdirButton />
+        </div>
       </div>
 
       <TeklifBelge
@@ -39,6 +64,7 @@ export default async function TeklifPage({ params }: { params: Promise<{ id: str
         musteri={musteri}
         ekipmanlar={(is.is_ekipman as unknown as EkipmanSatir[]) || []}
         odalar={(is.is_oda as unknown as OdaSatir[]) || []}
+        belgeTipi={belgeTipi}
       />
     </div>
   );

@@ -10,6 +10,8 @@ const TIP_LABEL: Record<string, string> = {
   diger: "Diğer",
 };
 
+export type BelgeTipi = "teklif" | "sozlesme";
+
 export type EkipmanSatir = { adet: number; envanter: { ad: string; marka: string | null; model: string | null } | null };
 export type OdaSatir = { studyo_oda: { ad: string; tip: string } | null };
 
@@ -24,16 +26,37 @@ export type TeklifIs = {
   notlar: string | null;
 };
 
+const TEKLIF_SARTLAR = [
+  "Bu teklif düzenleme tarihinden itibaren 14 gün geçerlidir.",
+  "Rezervasyon, kaporanın ödenmesiyle kesinleşir.",
+  "Ekipman teslim, kurulum ve toplama Sunline ekibi tarafından yapılır.",
+  "Ödeme koşulları ve diğer detaylar karşılıklı mutabakata göre belirlenir.",
+];
+
+const SOZLESME_SARTLAR = [
+  "Rezervasyon, kaporanın ödenmesiyle kesinleşir; kapora toplam bedelden düşülür.",
+  "Kiralanan ekipman müşteriye çalışır ve sağlam durumda teslim edilir; teslim sırasında taraflarca birlikte kontrol edilir.",
+  "Kiralama süresince ekipmanda oluşabilecek hasar, arıza, kayıp veya çalınmadan müşteri sorumludur; bu durumda ekipmanın onarım bedeli ya da güncel yenileme/piyasa bedeli müşteri tarafından ödenir.",
+  "Ekipman, teslim alındığı durumda ve kararlaştırılan sürede iade edilir; geç iadede günlük kira bedeli uygulanır.",
+  "Müşteri kaynaklı iptallerde kapora iade edilmez.",
+  "Doğal afet ve mücbir sebep gibi öngörülemeyen durumlar taraflarca karşılıklı değerlendirilir.",
+  "İşbu sözleşme iki nüsha olarak düzenlenmiş ve taraflarca imzalanmıştır.",
+];
+
 export function TeklifBelge({
-  is, teklifNo, musteri, ekipmanlar, odalar,
+  is, teklifNo, musteri, ekipmanlar, odalar, belgeTipi = "teklif",
 }: {
   is: TeklifIs;
   teklifNo: string;
   musteri: { ad: string; telefon: string | null; eposta: string | null } | null;
   ekipmanlar: EkipmanSatir[];
   odalar: OdaSatir[];
+  belgeTipi?: BelgeTipi;
 }) {
   const kalan = (is.tutar || 0) - (is.kapora || 0);
+  const sozlesme = belgeTipi === "sozlesme";
+  const baslik = sozlesme ? "SÖZLEŞME" : "TEKLİF";
+  const sartlar = sozlesme ? SOZLESME_SARTLAR : TEKLIF_SARTLAR;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-8 print:px-0 print:py-0">
@@ -51,7 +74,7 @@ export function TeklifBelge({
           </p>
         </div>
         <div className="text-right">
-          <h1 className="font-display text-2xl font-bold tracking-tight">TEKLİF</h1>
+          <h1 className="font-display text-2xl font-bold tracking-tight">{baslik}</h1>
           <p className="mt-1 text-xs text-stone-500">No: {teklifNo}</p>
           <p className="text-xs text-stone-500">Tarih: {tarih(new Date())}</p>
         </div>
@@ -60,7 +83,7 @@ export function TeklifBelge({
       {/* Müşteri + iş */}
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
-          <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-stone-400">Müşteri</h2>
+          <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-stone-400">{sozlesme ? "Kiracı / Müşteri" : "Müşteri"}</h2>
           <p className="font-semibold">{musteri?.ad || "—"}</p>
           {musteri?.telefon && <p className="text-sm text-stone-600">{musteri.telefon}</p>}
           {musteri?.eposta && <p className="text-sm text-stone-600">{musteri.eposta}</p>}
@@ -77,7 +100,7 @@ export function TeklifBelge({
       {/* Kapsam */}
       {(ekipmanlar.length > 0 || odalar.length > 0) && (
         <div className="mt-6">
-          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-400">Kapsam</h2>
+          <h2 className="mb-2 text-xs font-semibold uppercase tracking-wide text-stone-400">Kapsam{sozlesme ? " — Teslim Edilen Ekipman" : ""}</h2>
           <table className="w-full border-collapse text-sm">
             <thead>
               <tr className="border-b border-stone-300 text-left text-xs uppercase text-stone-400">
@@ -122,12 +145,9 @@ export function TeklifBelge({
 
       {/* Şartlar */}
       <div className="mt-6 rounded-lg bg-stone-50 p-4 text-xs leading-relaxed text-stone-500 print:bg-transparent print:p-0">
-        <p className="mb-1 font-semibold text-stone-600">Şartlar</p>
+        <p className="mb-1 font-semibold text-stone-600">{sozlesme ? "Sözleşme Şartları" : "Şartlar"}</p>
         <ul className="list-inside list-disc space-y-0.5">
-          <li>Bu teklif düzenleme tarihinden itibaren 14 gün geçerlidir.</li>
-          <li>Rezervasyon, kaporanın ödenmesiyle kesinleşir.</li>
-          <li>Ekipman teslim, kurulum ve toplama Sunline ekibi tarafından yapılır.</li>
-          <li>Ödeme koşulları ve diğer detaylar karşılıklı mutabakata göre belirlenir.</li>
+          {sartlar.map((s, i) => <li key={i}>{s}</li>)}
         </ul>
       </div>
 
@@ -135,11 +155,11 @@ export function TeklifBelge({
       <div className="mt-12 grid grid-cols-2 gap-8 text-sm">
         <div>
           <div className="h-12 border-b border-stone-400" />
-          <p className="mt-1 text-stone-500">Sunline</p>
+          <p className="mt-1 text-stone-500">{sozlesme ? "Sunline (Kiralayan)" : "Sunline"}</p>
         </div>
         <div>
           <div className="h-12 border-b border-stone-400" />
-          <p className="mt-1 text-stone-500">Müşteri</p>
+          <p className="mt-1 text-stone-500">{sozlesme ? "Müşteri (Kiracı)" : "Müşteri"}</p>
         </div>
       </div>
 
