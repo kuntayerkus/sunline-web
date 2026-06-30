@@ -7,6 +7,7 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
+  runtime: "experimental-edge",
   matcher: [
     // _next ve statik dosyalar hariç tüm rotalar
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
