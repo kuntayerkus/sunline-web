@@ -1,14 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
+import { gerekliOturum } from "@/lib/auth";
 import { PageHeader } from "@/components/page-header";
 import { IslerListesi } from "./isler-client";
 import type { Is, Musteri, Envanter } from "@/lib/types";
 
-type IsWithMusteri = Is & { 
+type IsWithMusteri = Is & {
   musteriler?: { ad: string } | null;
   is_ekipman?: { envanter_id: string, adet: number }[];
 };
 
 export default async function IslerPage() {
+  const { profile } = await gerekliOturum();
   const supabase = await createClient();
 
   const [
@@ -31,6 +33,7 @@ export default async function IslerPage() {
         isler={(isler as IsWithMusteri[]) || []}
         musteriler={(musteriler as Musteri[]) || []}
         envanterler={(envanterler as Envanter[]) || []}
+        patron={profile.rol === "patron"}
       />
     </div>
   );

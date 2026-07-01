@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { gerekliOturum } from "@/lib/auth";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
@@ -9,6 +10,8 @@ import { whatsappTo } from "@/lib/site";
 import { DetayAtamaModallari } from "./modallar-wrapper";
 
 export default async function IsDetayPage({ params }: { params: Promise<{ id: string }> }) {
+  const { profile } = await gerekliOturum();
+  const patron = profile.rol === "patron";
   const supabase = await createClient();
   const { id } = await params; // Next 16: params bir Promise, await edilmeli
 
@@ -69,7 +72,9 @@ export default async function IsDetayPage({ params }: { params: Promise<{ id: st
           <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
             <div><dt className="text-stone-500">Müşteri</dt><dd className="font-medium">{is.musteriler?.ad || "—"}</dd></div>
             <div><dt className="text-stone-500">Tarih</dt><dd className="font-medium">{tarihAralik(is.baslangic, is.bitis)}</dd></div>
-            <div><dt className="text-stone-500">Tutar / Kapora</dt><dd className="font-medium">{paraTL(is.tutar)} / {paraTL(is.kapora)}</dd></div>
+            {patron && (
+              <div><dt className="text-stone-500">Tutar / Kapora</dt><dd className="font-medium">{paraTL(is.tutar)} / {paraTL(is.kapora)}</dd></div>
+            )}
             <div><dt className="text-stone-500">Lokasyon</dt><dd className="font-medium">{is.lokasyon || "—"}</dd></div>
             <div className="col-span-2">
               <dt className="text-stone-500">Notlar</dt>

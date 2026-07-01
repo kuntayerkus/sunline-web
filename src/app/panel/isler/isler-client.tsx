@@ -29,7 +29,7 @@ const TIP_RENK: Record<string, string> = {
   diger: "bg-stone-100 text-stone-600",
 };
 
-export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWithMusteri[], musteriler: Musteri[], envanterler: Envanter[] }) {
+export function IslerListesi({ isler, musteriler, envanterler, patron }: { isler: IsWithMusteri[], musteriler: Musteri[], envanterler: Envanter[], patron: boolean }) {
   const [formAcik, setFormAcik] = useState(false);
   const [duzenlenen, setDuzenlenen] = useState<Is | null>(null);
   const [silinecekId, setSilinecekId] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWith
                 <Link href={`/panel/isler/${is.id}`} className="font-semibold leading-snug text-brand-700">
                   {is.baslik}
                 </Link>
-                <span className="shrink-0 font-semibold text-stone-900">{paraTL(is.tutar)}</span>
+                {patron && <span className="shrink-0 font-semibold text-stone-900">{paraTL(is.tutar)}</span>}
               </div>
               <div className="mt-0.5 text-sm text-stone-500">{is.musteriler?.ad || "—"}</div>
               <div className="mt-2 flex items-center gap-1.5 text-sm text-stone-600">
@@ -92,7 +92,7 @@ export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWith
                 <th>Tarih</th>
                 <th>Tip</th>
                 <th>Durum</th>
-                <th>Tutar</th>
+                {patron && <th>Tutar</th>}
                 <th className="w-[100px]"></th>
               </tr>
             </thead>
@@ -112,7 +112,7 @@ export function IslerListesi({ isler, musteriler, envanterler }: { isler: IsWith
                   <td>
                     <span className={`badge ${DURUM_RENK[is.durum] || ""}`}>{is.durum}</span>
                   </td>
-                  <td>{paraTL(is.tutar)}</td>
+                  {patron && <td>{paraTL(is.tutar)}</td>}
                   <td>
                     <div className="flex items-center gap-1 justify-end">
                       <button onClick={() => { setDuzenlenen(is); setFormAcik(true); }} className="btn-ghost btn-sm px-2">

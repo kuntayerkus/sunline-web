@@ -82,6 +82,17 @@ export async function ekipmanGuncelle(id: string, formData: FormData) {
 
 export async function ekipmanSil(id: string) {
   const supabase = await createClient();
+
+  const { count } = await supabase
+    .from("is_ekipman")
+    .select("id", { count: "exact", head: true })
+    .eq("envanter_id", id);
+  if (count && count > 0) {
+    return {
+      error: `Bu ekipman ${count} işe atanmış, silinemez. Geçmiş kayıtları korumak için durumunu "Elden Çıktı" olarak güncelleyin.`,
+    };
+  }
+
   const { error } = await supabase.from("envanter").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath(PATH);
@@ -147,6 +158,17 @@ export async function odaGuncelle(id: string, formData: FormData) {
 
 export async function odaSil(id: string) {
   const supabase = await createClient();
+
+  const { count } = await supabase
+    .from("is_oda")
+    .select("id", { count: "exact", head: true })
+    .eq("oda_id", id);
+  if (count && count > 0) {
+    return {
+      error: `Bu oda ${count} işe atanmış, silinemez. Geçmiş kayıtları korumak için pasif duruma alın.`,
+    };
+  }
+
   const { error } = await supabase.from("studyo_oda").delete().eq("id", id);
   if (error) return { error: error.message };
   revalidatePath(PATH);

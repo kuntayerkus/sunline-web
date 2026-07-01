@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Phone, Mail, ClipboardList, MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
+import { gerekliOturum } from "@/lib/auth";
 import { whatsappTo } from "@/lib/site";
 import { PageHeader } from "@/components/page-header";
 import { EmptyState } from "@/components/empty-state";
@@ -25,6 +26,8 @@ const DURUM_RENK: Record<string, string> = {
 
 export default async function MusteriDetayPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
+  const { profile } = await gerekliOturum();
+  const patron = profile.rol === "patron";
   const supabase = await createClient();
 
   const [{ data: musteri }, { data: isler }] = await Promise.all([
@@ -75,23 +78,27 @@ export default async function MusteriDetayPage({ params }: { params: Promise<{ i
       )}
 
       {/* Bakiye özeti */}
-      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className={`mb-6 grid grid-cols-2 gap-3 ${patron ? "lg:grid-cols-4" : ""}`}>
         <div className="card p-4">
           <h3 className="text-xs font-medium text-stone-500">Toplam İş</h3>
           <p className="mt-1 text-xl font-bold text-stone-900">{gecerli.length}</p>
         </div>
-        <div className="card p-4">
-          <h3 className="text-xs font-medium text-stone-500">Toplam Tutar</h3>
-          <p className="mt-1 text-xl font-bold text-stone-900">{paraTL(toplamTutar)}</p>
-        </div>
-        <div className="card p-4">
-          <h3 className="text-xs font-medium text-stone-500">Alınan Kapora</h3>
-          <p className="mt-1 text-xl font-bold text-emerald-600">{paraTL(alinanKapora)}</p>
-        </div>
-        <div className="card p-4">
-          <h3 className="text-xs font-medium text-stone-500">Kalan (Bakiye)</h3>
-          <p className={`mt-1 text-xl font-bold ${kalan > 0 ? "text-red-600" : "text-stone-900"}`}>{paraTL(kalan)}</p>
-        </div>
+        {patron && (
+          <>
+            <div className="card p-4">
+              <h3 className="text-xs font-medium text-stone-500">Toplam Tutar</h3>
+              <p className="mt-1 text-xl font-bold text-stone-900">{paraTL(toplamTutar)}</p>
+            </div>
+            <div className="card p-4">
+              <h3 className="text-xs font-medium text-stone-500">Alınan Kapora</h3>
+              <p className="mt-1 text-xl font-bold text-emerald-600">{paraTL(alinanKapora)}</p>
+            </div>
+            <div className="card p-4">
+              <h3 className="text-xs font-medium text-stone-500">Kalan (Bakiye)</h3>
+              <p className={`mt-1 text-xl font-bold ${kalan > 0 ? "text-red-600" : "text-stone-900"}`}>{paraTL(kalan)}</p>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Notlar */}
@@ -116,7 +123,7 @@ export default async function MusteriDetayPage({ params }: { params: Promise<{ i
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 <span className={`badge ${DURUM_RENK[i.durum] || ""}`}>{i.durum}</span>
-                <span className="font-semibold text-stone-900">{paraTL(i.tutar)}</span>
+                {patron && <span className="font-semibold text-stone-900">{paraTL(i.tutar)}</span>}
               </div>
             </Link>
           ))}

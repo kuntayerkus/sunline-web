@@ -239,7 +239,8 @@ export function EnvanterSayfasi({ ekipmanlar }: { ekipmanlar: Envanter[] }) {
   function handleSil() {
     if (!silinecekId) return;
     startTransition(async () => {
-      await ekipmanSil(silinecekId);
+      const res = await ekipmanSil(silinecekId);
+      if (res?.error) alert(res.error);
       setSilinecekId(null);
     });
   }

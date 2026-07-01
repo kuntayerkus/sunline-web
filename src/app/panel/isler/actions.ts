@@ -5,10 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { z } from "zod";
 
-type CakismaSatir = {
-  envanter?: { ad: string } | null;
-  isler?: { baslik: string } | null;
-};
+const AKTIF_DURUMLAR = ["talep", "teklif", "onayli"] as const;
 
 const isSchema = z.object({
   baslik: z.string().min(1, "Başlık zorunludur"),
@@ -23,20 +20,30 @@ const isSchema = z.object({
   notlar: z.string().nullable(),
 });
 
-async function checkEkipmanCakismasi(
+// Seçilen ekipmanlar için, çakışan tarih aralığındaki başka işlerde ne kadar
+// adedin zaten rezerve edildiğini toplar ve stoğu aşan istekleri raporlar.
+async function checkAtamaCakismasi(
   supabase: SupabaseClient,
-  ekipmanIds: string[],
+  istekler: { envanter_id: string; adet: number }[],
   baslangic: string,
   bitis: string,
   excludeIsId?: string
 ) {
-  if (ekipmanIds.length === 0) return null;
-  
+  if (istekler.length === 0) return null;
+  const ids = istekler.map((i) => i.envanter_id);
+
+  const { data: envanterData, error: envErr } = await supabase
+    .from("envanter")
+    .select("id, ad, adet")
+    .in("id", ids);
+  if (envErr) throw envErr;
+  const envanterMap = new Map((envanterData || []).map((e) => [e.id as string, e as { ad: string; adet: number }]));
+
   let query = supabase
     .from("is_ekipman")
-    .select("envanter_id, isler!inner(id, baslik, durum, baslangic, bitis), envanter(ad)")
-    .in("envanter_id", ekipmanIds)
-    .in("isler.durum", ["talep", "teklif", "onayli"])
+    .select("envanter_id, adet, isler!inner(id, durum, baslangic, bitis)")
+    .in("envanter_id", ids)
+    .in("isler.durum", AKTIF_DURUMLAR)
     .lt("isler.baslangic", bitis)
     .gt("isler.bitis", baslangic);
 
@@ -47,11 +54,53 @@ async function checkEkipmanCakismasi(
   const { data, error } = await query;
   if (error) throw error;
 
+  const rezerveEdilen = new Map<string, number>();
+  for (const row of (data as unknown as { envanter_id: string; adet: number }[]) || []) {
+    rezerveEdilen.set(row.envanter_id, (rezerveEdilen.get(row.envanter_id) || 0) + row.adet);
+  }
+
+  const hatalar: string[] = [];
+  for (const istek of istekler) {
+    const env = envanterMap.get(istek.envanter_id);
+    const stok = env?.adet ?? 0;
+    const doluAdet = rezerveEdilen.get(istek.envanter_id) || 0;
+    const musaitAdet = stok - doluAdet;
+    if (istek.adet > musaitAdet) {
+      hatalar.push(
+        `${env?.ad || "Ekipman"}: bu tarihlerde ${Math.max(musaitAdet, 0)} adet müsait (toplam stok ${stok}), ${istek.adet} adet istendi.`
+      );
+    }
+  }
+
+  if (hatalar.length > 0) {
+    return `Çakışma var! Seçilen tarihlerde yeterli ekipman yok:\n${hatalar.join("\n")}`;
+  }
+  return null;
+}
+
+// Oda/ekip gibi tekil (bölünemez) kaynaklar için basit çakışma kontrolü.
+async function checkTekilKaynakCakismasi(
+  supabase: SupabaseClient,
+  tablo: "is_oda" | "is_ekip",
+  kolon: "oda_id" | "ekip_id",
+  kaynakId: string,
+  baslangic: string,
+  bitis: string,
+  excludeIsId: string
+) {
+  const { data, error } = await supabase
+    .from(tablo)
+    .select("isler!inner(id, baslik, durum, baslangic, bitis)")
+    .eq(kolon, kaynakId)
+    .in("isler.durum", AKTIF_DURUMLAR)
+    .lt("isler.baslangic", bitis)
+    .gt("isler.bitis", baslangic)
+    .neq("isler.id", excludeIsId);
+  if (error) throw error;
+
   if (data && data.length > 0) {
-    const msgs = (data as unknown as CakismaSatir[]).map((d) => `${d.envanter?.ad || 'Ekipman'} -> ${d.isler?.baslik || 'Başka İş'}`);
-    // Tekilleştirme
-    const uniqueMsgs = Array.from(new Set(msgs));
-    return `Çakışma var! Aşağıdaki ekipmanlar belirtilen tarihlerde başka işlere atanmış:\n${uniqueMsgs.join("\n")}`;
+    const baslik = (data[0] as unknown as { isler: { baslik: string } }).isler?.baslik;
+    return `Seçilen tarihlerde dolu: ${baslik || "başka bir iş"}.`;
   }
   return null;
 }
@@ -85,9 +134,8 @@ export async function isEkle(formData: FormData) {
   }
 
   // Çakışma kontrolü
-  if (seciliEkipmanlar.length > 0 && ["talep", "teklif", "onayli"].includes(validated.data.durum)) {
-    const ekipmanIds = seciliEkipmanlar.map(e => e.envanter_id);
-    const cakisim = await checkEkipmanCakismasi(supabase, ekipmanIds, validated.data.baslangic, validated.data.bitis);
+  if (seciliEkipmanlar.length > 0 && AKTIF_DURUMLAR.includes(validated.data.durum as typeof AKTIF_DURUMLAR[number])) {
+    const cakisim = await checkAtamaCakismasi(supabase, seciliEkipmanlar, validated.data.baslangic, validated.data.bitis);
     if (cakisim) return { error: cakisim };
   }
 
@@ -135,9 +183,8 @@ export async function isGuncelle(id: string, formData: FormData) {
   }
 
   // Çakışma kontrolü
-  if (seciliEkipmanlar.length > 0 && ["talep", "teklif", "onayli"].includes(validated.data.durum)) {
-    const ekipmanIds = seciliEkipmanlar.map(e => e.envanter_id);
-    const cakisim = await checkEkipmanCakismasi(supabase, ekipmanIds, validated.data.baslangic, validated.data.bitis, id);
+  if (seciliEkipmanlar.length > 0 && AKTIF_DURUMLAR.includes(validated.data.durum as typeof AKTIF_DURUMLAR[number])) {
+    const cakisim = await checkAtamaCakismasi(supabase, seciliEkipmanlar, validated.data.baslangic, validated.data.bitis, id);
     if (cakisim) return { error: cakisim };
   }
 
@@ -171,12 +218,21 @@ export async function isSil(id: string) {
 // Atamalar
 export async function ekipmanAta(isId: string, envanterId: string, adet: number) {
   const supabase = await createClient();
-  
-  // Çakışma kontrolü
-  const { data: isData } = await supabase.from("isler").select("baslangic, bitis").eq("id", isId).single();
+
+  const { data: isData } = await supabase.from("isler").select("baslangic, bitis, durum").eq("id", isId).single();
   if (!isData) return { error: "İş bulunamadı" };
 
-  // TODO: Tam çakışma kontrolü eklenebilir, şimdilik basit ekleme yapıyoruz
+  if (AKTIF_DURUMLAR.includes(isData.durum as typeof AKTIF_DURUMLAR[number])) {
+    const cakisma = await checkAtamaCakismasi(
+      supabase,
+      [{ envanter_id: envanterId, adet }],
+      isData.baslangic,
+      isData.bitis,
+      isId
+    );
+    if (cakisma) return { error: cakisma };
+  }
+
   const { error } = await supabase.from("is_ekipman").insert({
     is_id: isId,
     envanter_id: envanterId,
@@ -195,6 +251,15 @@ export async function ekipmanCikar(id: string, isId?: string) {
 
 export async function odaAta(isId: string, odaId: string) {
   const supabase = await createClient();
+
+  const { data: isData } = await supabase.from("isler").select("baslangic, bitis, durum").eq("id", isId).single();
+  if (!isData) return { error: "İş bulunamadı" };
+
+  if (AKTIF_DURUMLAR.includes(isData.durum as typeof AKTIF_DURUMLAR[number])) {
+    const cakisma = await checkTekilKaynakCakismasi(supabase, "is_oda", "oda_id", odaId, isData.baslangic, isData.bitis, isId);
+    if (cakisma) return { error: cakisma };
+  }
+
   const { error } = await supabase.from("is_oda").insert({
     is_id: isId,
     oda_id: odaId,
@@ -212,6 +277,15 @@ export async function odaCikar(id: string, isId?: string) {
 
 export async function ekipAta(isId: string, ekipId: string, rol?: string) {
   const supabase = await createClient();
+
+  const { data: isData } = await supabase.from("isler").select("baslangic, bitis, durum").eq("id", isId).single();
+  if (!isData) return { error: "İş bulunamadı" };
+
+  if (AKTIF_DURUMLAR.includes(isData.durum as typeof AKTIF_DURUMLAR[number])) {
+    const cakisma = await checkTekilKaynakCakismasi(supabase, "is_ekip", "ekip_id", ekipId, isData.baslangic, isData.bitis, isId);
+    if (cakisma) return { error: cakisma };
+  }
+
   const { error } = await supabase.from("is_ekip").insert({
     is_id: isId,
     ekip_id: ekipId,

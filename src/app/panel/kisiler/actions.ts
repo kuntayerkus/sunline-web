@@ -149,6 +149,17 @@ export async function ekipGuncelle(id: string, formData: FormData) {
 
 export async function ekipSil(id: string) {
   const supabase = await createClient();
+
+  const { count } = await supabase
+    .from("is_ekip")
+    .select("id", { count: "exact", head: true })
+    .eq("ekip_id", id);
+  if (count && count > 0) {
+    return {
+      error: `Bu kişi ${count} işe atanmış, silinemez. Geçmiş kayıtları korumak için "Pasif" duruma alın.`,
+    };
+  }
+
   const { error } = await supabase.from("ekip").delete().eq("id", id);
 
   if (error) return { error: "Ekip üyesi silinirken hata oluştu: " + error.message };

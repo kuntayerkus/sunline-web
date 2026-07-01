@@ -188,7 +188,8 @@ export function OdaSayfasi({ odalar }: { odalar: StudyoOda[] }) {
   function handleSil() {
     if (!silinecekId) return;
     startTransition(async () => {
-      await odaSil(silinecekId);
+      const res = await odaSil(silinecekId);
+      if (res?.error) alert(res.error);
       setSilinecekId(null);
     });
   }
