@@ -64,7 +64,7 @@ function HareketFormu({ hareket, isler, onClose }: { hareket?: MaliHareket | nul
     <Modal open onClose={onClose} baslik={hareket ? "Hareketi Düzenle" : "Yeni Gelir / Gider"} boyut="md">
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && <div className="text-sm text-red-600 bg-red-50 p-3 rounded">{error}</div>}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Tip *</label>
             <select name="tip" required defaultValue={hareket?.tip || "gelir"} className="select">
@@ -77,7 +77,7 @@ function HareketFormu({ hareket, isler, onClose }: { hareket?: MaliHareket | nul
             <input name="kategori" defaultValue={hareket?.kategori || ""} className="input" placeholder="Örn: Kira, Stüdyo Kayıt..." />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Tutar (₺) *</label>
             <input type="number" name="tutar" step="0.01" min="0.01" required defaultValue={hareket?.tutar || ""} className="input" inputMode="decimal" />
@@ -87,7 +87,7 @@ function HareketFormu({ hareket, isler, onClose }: { hareket?: MaliHareket | nul
             <input type="date" name="tarih" required defaultValue={hareket?.tarih || new Date().toISOString().slice(0, 10)} className="input" />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Ödeme Yöntemi</label>
             <select name="odeme_yontemi" defaultValue={hareket?.odeme_yontemi || ""} className="select">
@@ -144,7 +144,7 @@ function SabitGiderFormu({ kayit, onClose }: { kayit?: SabitGider | null; onClos
           <label className="label">Ad *</label>
           <input name="ad" required defaultValue={kayit?.ad || ""} className="input" placeholder="Örn: Dükkan kirası, Maaş — Ahmet" />
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Kategori</label>
             <input name="kategori" defaultValue={kayit?.kategori || ""} className="input" placeholder="Kira, Maaş, Abonelik..." list="sabit-kategori" />
@@ -158,7 +158,7 @@ function SabitGiderFormu({ kayit, onClose }: { kayit?: SabitGider | null; onClos
             <input type="number" name="tutar" step="0.01" min="0.01" required defaultValue={kayit?.tutar || ""} className="input" inputMode="decimal" />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Başlangıç Ayı *</label>
             <input type="month" name="baslangic_ay" required defaultValue={(kayit?.baslangic_ay || new Date().toISOString()).slice(0, 7)} className="input" />

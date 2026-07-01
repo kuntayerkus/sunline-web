@@ -50,19 +50,20 @@ export function Modal({
     <div
       ref={overlayRef}
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
-      className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-sm pt-[10vh] px-4 animate-in fade-in"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-sm pt-6 px-3 animate-in fade-in sm:pt-[10vh] sm:px-4"
     >
       <div
         ref={panelRef}
         className={`${boyutSinifi[boyut]} w-full rounded-2xl bg-white shadow-2xl ring-1 ring-stone-200/60 animate-in slide-in-from-bottom-4`}
       >
         {/* Başlık */}
-        <div className="flex items-center justify-between border-b border-stone-100 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-stone-100 px-4 py-3 sm:px-6 sm:py-4">
           <h2 className="text-lg font-semibold text-stone-900">{baslik}</h2>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1.5 text-stone-400 transition hover:bg-stone-100 hover:text-stone-600"
+            aria-label="Kapat"
+            className="-mr-2 flex h-11 w-11 items-center justify-center rounded-lg text-stone-400 transition hover:bg-stone-100 hover:text-stone-600"
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <path d="M5 5l10 10M15 5L5 15" />
@@ -70,7 +71,7 @@ export function Modal({
           </button>
         </div>
         {/* İçerik */}
-        <div className="max-h-[70vh] overflow-y-auto px-6 py-5">
+        <div className="max-h-[75vh] overflow-y-auto px-4 py-4 sm:max-h-[70vh] sm:px-6 sm:py-5">
           {children}
         </div>
       </div>

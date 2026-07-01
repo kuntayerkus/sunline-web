@@ -7,27 +7,37 @@ import {
   CalendarDays,
   ClipboardList,
   Boxes,
+  Wallet,
   Menu,
   type LucideIcon,
 } from "lucide-react";
+import type { Rol } from "@/lib/types";
 
 type Item = { href: string; etiket: string; icon: LucideIcon };
 
 // Mobilde en sık kullanılan 4 bölüm + tüm menü için "Menü".
-const ITEMS: Item[] = [
+// Patron'un en çok kontrol ettiği kalem mali durum olduğu için onun hızlı
+// erişiminde Envanter yerine Mali gösterilir; ekip için Envanter kalır.
+const ORTAK_ITEMS: Item[] = [
   { href: "/panel", etiket: "Özet", icon: LayoutDashboard },
   { href: "/panel/takvim", etiket: "Takvim", icon: CalendarDays },
   { href: "/panel/isler", etiket: "İşler", icon: ClipboardList },
-  { href: "/panel/envanter", etiket: "Envanter", icon: Boxes },
 ];
+
+function dorduncuOge(rol: Rol): Item {
+  return rol === "patron"
+    ? { href: "/panel/mali", etiket: "Mali", icon: Wallet }
+    : { href: "/panel/envanter", etiket: "Envanter", icon: Boxes };
+}
 
 function aktifMi(pathname: string, href: string) {
   if (href === "/panel") return pathname === "/panel";
   return pathname === href || pathname.startsWith(href + "/");
 }
 
-export function BottomNav({ onMenu }: { onMenu: () => void }) {
+export function BottomNav({ rol, onMenu }: { rol: Rol; onMenu: () => void }) {
   const pathname = usePathname();
+  const ITEMS = [...ORTAK_ITEMS, dorduncuOge(rol)];
 
   return (
     <nav

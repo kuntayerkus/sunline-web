@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
+import { dbHata } from "@/lib/db-error";
 import { z } from "zod";
 
 const AKTIF_DURUMLAR = ["talep", "teklif", "onayli"] as const;
@@ -18,6 +19,9 @@ const isSchema = z.object({
   tutar: z.coerce.number().min(0),
   kapora: z.coerce.number().min(0),
   notlar: z.string().nullable(),
+}).refine((d) => new Date(d.bitis) > new Date(d.baslangic), {
+  message: "Bitiş tarihi başlangıçtan sonra olmalıdır",
+  path: ["bitis"],
 });
 
 // Seçilen ekipmanlar için, çakışan tarih aralığındaki başka işlerde ne kadar
@@ -121,7 +125,7 @@ export async function isEkle(formData: FormData) {
   };
 
   const validated = isSchema.safeParse(data);
-  if (!validated.success) return { error: "Doğrulama hatası" };
+  if (!validated.success) return { error: validated.error.issues[0]?.message || "Doğrulama hatası" };
 
   const seciliEkipmanlarStr = formData.get("secili_ekipmanlar") as string;
   let seciliEkipmanlar: { envanter_id: string, adet: number }[] = [];
@@ -144,8 +148,8 @@ export async function isEkle(formData: FormData) {
     created_by: user.id,
     kaynak: "admin",
   }).select("id").single();
-  
-  if (error) return { error: error.message };
+
+  if (error) return { error: dbHata(error, "İş kaydedilirken") };
 
   if (seciliEkipmanlar.length > 0 && inserted) {
     const insertData = seciliEkipmanlar.map(e => ({
@@ -172,7 +176,7 @@ export async function isGuncelle(id: string, formData: FormData) {
   };
 
   const validated = isSchema.safeParse(data);
-  if (!validated.success) return { error: "Doğrulama hatası" };
+  if (!validated.success) return { error: validated.error.issues[0]?.message || "Doğrulama hatası" };
 
   const seciliEkipmanlarStr = formData.get("secili_ekipmanlar") as string;
   let seciliEkipmanlar: { envanter_id: string, adet: number }[] = [];
@@ -189,7 +193,7 @@ export async function isGuncelle(id: string, formData: FormData) {
   }
 
   const { error } = await supabase.from("isler").update(validated.data).eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "İş güncellenirken") };
 
   if (seciliEkipmanlarStr !== null) {
     // Sadece formdan bu input geldiyse (Yani ana sayfadan düzenleme yapılıyorsa)
@@ -238,14 +242,14 @@ export async function ekipmanAta(isId: string, envanterId: string, adet: number)
     envanter_id: envanterId,
     adet,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Ekipman atanırken") };
   revalidatePath(`/panel/isler/${isId}`);
 }
 
 export async function ekipmanCikar(id: string, isId?: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("is_ekipman").delete().eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Ekipman kaldırılırken") };
   if (isId) revalidatePath(`/panel/isler/${isId}`);
 }
 
@@ -264,14 +268,14 @@ export async function odaAta(isId: string, odaId: string) {
     is_id: isId,
     oda_id: odaId,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Oda atanırken") };
   revalidatePath(`/panel/isler/${isId}`);
 }
 
 export async function odaCikar(id: string, isId?: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("is_oda").delete().eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Oda kaldırılırken") };
   if (isId) revalidatePath(`/panel/isler/${isId}`);
 }
 
@@ -291,13 +295,13 @@ export async function ekipAta(isId: string, ekipId: string, rol?: string) {
     ekip_id: ekipId,
     rol: rol || null,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Ekip atanırken") };
   revalidatePath(`/panel/isler/${isId}`);
 }
 
 export async function ekipCikar(id: string, isId?: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("is_ekip").delete().eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Ekip kaldırılırken") };
   if (isId) revalidatePath(`/panel/isler/${isId}`);
 }

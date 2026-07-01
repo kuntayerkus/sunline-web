@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { dbHata } from "@/lib/db-error";
 
 // ── Müşteri ────────────────────────────────────────────
 
@@ -36,7 +37,7 @@ export async function musteriEkle(formData: FormData) {
     notlar: parsed.data.notlar || null,
   });
 
-  if (error) return { error: "Müşteri eklenirken hata oluştu: " + error.message };
+  if (error) return { error: dbHata(error, "Müşteri eklenirken") };
   revalidatePath("/panel/kisiler");
 }
 
@@ -65,7 +66,7 @@ export async function musteriGuncelle(id: string, formData: FormData) {
     })
     .eq("id", id);
 
-  if (error) return { error: "Müşteri güncellenirken hata oluştu: " + error.message };
+  if (error) return { error: dbHata(error, "Müşteri güncellenirken") };
   revalidatePath("/panel/kisiler");
 }
 
@@ -73,7 +74,7 @@ export async function musteriSil(id: string) {
   const supabase = await createClient();
   const { error } = await supabase.from("musteriler").delete().eq("id", id);
 
-  if (error) return { error: "Müşteri silinirken hata oluştu: " + error.message };
+  if (error) return { error: dbHata(error, "Müşteri silinirken") };
   revalidatePath("/panel/kisiler");
 }
 
@@ -112,7 +113,7 @@ export async function ekipEkle(formData: FormData) {
     notlar: parsed.data.notlar || null,
   });
 
-  if (error) return { error: "Ekip üyesi eklenirken hata oluştu: " + error.message };
+  if (error) return { error: dbHata(error, "Ekip üyesi eklenirken") };
   revalidatePath("/panel/kisiler");
 }
 
@@ -143,7 +144,7 @@ export async function ekipGuncelle(id: string, formData: FormData) {
     })
     .eq("id", id);
 
-  if (error) return { error: "Ekip üyesi güncellenirken hata oluştu: " + error.message };
+  if (error) return { error: dbHata(error, "Ekip üyesi güncellenirken") };
   revalidatePath("/panel/kisiler");
 }
 
@@ -162,6 +163,6 @@ export async function ekipSil(id: string) {
 
   const { error } = await supabase.from("ekip").delete().eq("id", id);
 
-  if (error) return { error: "Ekip üyesi silinirken hata oluştu: " + error.message };
+  if (error) return { error: dbHata(error, "Ekip üyesi silinirken") };
   revalidatePath("/panel/kisiler");
 }

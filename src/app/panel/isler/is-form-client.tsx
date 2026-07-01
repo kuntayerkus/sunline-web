@@ -40,9 +40,17 @@ export function IsFormu({
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+
+    const baslangic = formData.get("baslangic") as string;
+    const bitis = formData.get("bitis") as string;
+    if (baslangic && bitis && new Date(bitis) <= new Date(baslangic)) {
+      setError("Bitiş tarihi başlangıçtan sonra olmalıdır.");
+      return;
+    }
+
     setLoading(true);
     setError(null);
-    const formData = new FormData(e.currentTarget);
     const res = is ? await isGuncelle(is.id, formData) : await isEkle(formData);
     setLoading(false);
     if (res?.error) setError(res.error);
@@ -65,7 +73,7 @@ export function IsFormu({
           <input name="baslik" required defaultValue={is?.baslik} className="input" />
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Tip *</label>
             <select name="tip" required defaultValue={is?.tip || "backline"} className="select">
@@ -99,7 +107,7 @@ export function IsFormu({
           </select>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Başlangıç *</label>
             <input type="datetime-local" name="baslangic" required defaultValue={formatTarih(is?.baslangic)} className="input" />
@@ -151,7 +159,7 @@ export function IsFormu({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <label className="label">Tutar (₺)</label>
             <input type="number" name="tutar" step="0.01" defaultValue={is?.tutar || 0} className="input" />

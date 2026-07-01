@@ -30,7 +30,7 @@ export default function Home() {
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden flex items-center justify-center p-6">
+      <section className="relative min-h-screen w-full overflow-hidden flex items-center justify-center p-6 py-28">
         <motion.div style={{ y }} className="absolute inset-0 z-0">
           <div className="w-full h-full bg-stone-900 flex items-center justify-center opacity-40">
             <span className="text-[var(--color-paper)]/50 font-display uppercase tracking-widest text-sm">Kling 3.0 Hero Video Placeholder</span>
@@ -43,10 +43,10 @@ export default function Home() {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, delay: heroDelay, ease: [0.16, 1, 0.3, 1] }}
-            className="text-5xl md:text-8xl lg:text-[9rem] font-display font-black tracking-tighter leading-none"
+            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[8rem] font-display font-black tracking-tighter leading-none"
           >
-            KUSURSUZ KAYIT<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span><br/>
-            <span className="text-[var(--color-flare)]">EKSİKSİZ SAHNE<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span>
+            KUSURSUZ <span className="whitespace-nowrap">KAYIT<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span><br/>
+            <span className="text-[var(--color-flare)]">EKSİKSİZ <span className="whitespace-nowrap">SAHNE<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span></span>
           </motion.h1>
           
           <motion.div 
@@ -74,7 +74,7 @@ export default function Home() {
           <div className="w-full md:w-1/2 flex flex-col gap-6">
             <span className="font-display text-[var(--color-volt)] text-xl font-bold tracking-widest">01 / BACKLINE</span>
             <h2 className="text-5xl md:text-7xl font-display font-black tracking-tighter leading-none">
-              SAHNEDE<br/>DEV GÜÇ<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
+              SAHNEDE<br/>DEV <span className="whitespace-nowrap">GÜÇ<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span>
             </h2>
             <p className="text-lg md:text-xl font-medium opacity-80 mt-4">
               Festivaller, turneler ve özel etkinlikler için Ege Bölgesi&apos;nin en geniş ve bakımlı premium backline envanteri. Tam zamanında, eksiksiz kurulum.
@@ -109,7 +109,7 @@ export default function Home() {
           <div className="w-full md:w-1/2 flex flex-col gap-6">
             <span className="font-display text-[var(--color-flare)] text-xl font-bold tracking-widest">02 / KAYIT</span>
             <h2 className="text-5xl md:text-7xl font-display font-black tracking-tighter leading-none">
-              SESİN BURADA<br/>BAŞLAR<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
+              SESİN BURADA<br/><span className="whitespace-nowrap">BAŞLAR<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span>
             </h2>
             <p className="text-lg md:text-xl font-light opacity-80 mt-4">
               İzmir&apos;in en iyi ve en donanımlı stüdyosu. İnce mühendislikle tasarlanmış mükemmel akustik, eşi benzeri olmayan analog hardware ve hiçbir saniyesi ziyan edilmeyen konforlu bir üretim alanı.
@@ -154,7 +154,7 @@ export default function Home() {
           <div className="w-full md:w-1/2 flex flex-col gap-6">
             <span className="font-display text-[var(--color-volt)] text-xl font-bold tracking-widest">03 / MIX & MASTER</span>
             <h2 className="text-5xl md:text-7xl font-display font-black tracking-tighter leading-none">
-              KUSURSUZ<br/>DENGE<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
+              KUSURSUZ<br/><span className="whitespace-nowrap">DENGE<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span>
             </h2>
             <p className="text-lg md:text-xl font-medium opacity-80 mt-4">
               Analog sıcaklık ve dijital keskinlik. Konsol odamızdaki devasa Genelec monitörler ile şarkının hak ettiği son dokunuş, endüstri standartlarında net bir duyum.
@@ -186,7 +186,7 @@ export default function Home() {
         <div className="max-w-6xl mx-auto flex flex-col items-center text-center gap-8">
           <span className="font-display text-[var(--color-flare)] text-xl font-bold tracking-widest">04 / PROVA</span>
           <h2 className="text-6xl md:text-8xl font-display font-black tracking-tighter leading-none">
-            SAHNE ÖNCESİ<br/>SON DURAK<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
+            SAHNE ÖNCESİ<br/>SON <span className="whitespace-nowrap">DURAK<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span>
           </h2>
           <p className="text-xl max-w-2xl font-light opacity-80 mt-4">
             Her türlü enstrümana ve rider isteğine anında cevap verebilen, ince mühendislikle tasarlanmış prova salonu. Geniş alan, referans duyum, terlemeden çalışabileceğin güçlü havalandırma. Sadece çalmaya odaklan.
@@ -206,7 +206,7 @@ export default function Home() {
       {/* Footer / CTA */}
       <footer className="relative py-32 px-6 z-20 bg-[var(--color-ink)] text-[var(--color-paper)] border-t border-stone-800 flex flex-col items-center text-center">
          <h2 className="text-4xl md:text-6xl font-display font-black tracking-tighter mb-8">
-            SAHNEYE HAZIRLAN<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span>
+            SAHNEYE <span className="whitespace-nowrap">HAZIRLAN<span className="bg-current inline-block h-[0.25em] w-[0.25em] ml-[0.1em]"></span></span>
          </h2>
          <a
             href={whatsappLink("Merhaba, Sunline ile çalışmak istiyorum. Detayları konuşabilir miyiz?")}

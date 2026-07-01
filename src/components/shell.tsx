@@ -41,13 +41,13 @@ export function Shell({
 
       <div className="lg:pl-64">
         <Topbar adSoyad={adSoyad} email={email} />
-        <main className="mx-auto max-w-7xl px-4 pb-28 pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-6">
+        <main className="mx-auto max-w-7xl px-4 pb-[calc(5rem+env(safe-area-inset-bottom))] pt-5 sm:px-6 lg:px-8 lg:pb-8 lg:pt-6">
           {children}
         </main>
       </div>
 
       {/* Mobil alt navigasyon */}
-      <BottomNav onMenu={() => setMobilAcik(true)} />
+      <BottomNav rol={rol} onMenu={() => setMobilAcik(true)} />
     </div>
   );
 }

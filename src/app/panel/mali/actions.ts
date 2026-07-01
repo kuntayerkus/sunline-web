@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { dbHata } from "@/lib/db-error";
 import { z } from "zod";
 
 const maliSchema = z.object({
@@ -29,13 +30,13 @@ export async function hareketEkle(formData: FormData) {
   };
 
   const validated = maliSchema.safeParse(data);
-  if (!validated.success) return { error: "Doğrulama hatası" };
+  if (!validated.success) return { error: validated.error.issues[0]?.message || "Doğrulama hatası" };
 
   const { error } = await supabase.from("mali_hareket").insert({
     ...validated.data,
     created_by: user.id,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Hareket eklenirken") };
 
   revalidatePath("/panel/mali");
 }
@@ -52,10 +53,10 @@ export async function hareketGuncelle(id: string, formData: FormData) {
   };
 
   const validated = maliSchema.safeParse(data);
-  if (!validated.success) return { error: "Doğrulama hatası" };
+  if (!validated.success) return { error: validated.error.issues[0]?.message || "Doğrulama hatası" };
 
   const { error } = await supabase.from("mali_hareket").update(validated.data).eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Hareket güncellenirken") };
 
   revalidatePath("/panel/mali");
 }
@@ -98,23 +99,23 @@ export async function sabitGiderEkle(formData: FormData) {
   if (!user) return { error: "Oturum bulunamadı" };
 
   const validated = sabitGiderSchema.safeParse(sabitGiderForm(formData));
-  if (!validated.success) return { error: "Doğrulama hatası" };
+  if (!validated.success) return { error: validated.error.issues[0]?.message || "Doğrulama hatası" };
 
   const { error } = await supabase.from("sabit_gider").insert({
     ...validated.data,
     created_by: user.id,
   });
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Sabit gider eklenirken") };
   revalidatePath("/panel/mali");
 }
 
 export async function sabitGiderGuncelle(id: string, formData: FormData) {
   const supabase = await createClient();
   const validated = sabitGiderSchema.safeParse(sabitGiderForm(formData));
-  if (!validated.success) return { error: "Doğrulama hatası" };
+  if (!validated.success) return { error: validated.error.issues[0]?.message || "Doğrulama hatası" };
 
   const { error } = await supabase.from("sabit_gider").update(validated.data).eq("id", id);
-  if (error) return { error: error.message };
+  if (error) return { error: dbHata(error, "Sabit gider güncellenirken") };
   revalidatePath("/panel/mali");
 }
 

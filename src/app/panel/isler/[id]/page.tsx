@@ -69,7 +69,7 @@ export default async function IsDetayPage({ params }: { params: Promise<{ id: st
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <div className="card p-5 md:col-span-2">
           <h3 className="text-base font-semibold mb-3">İş Bilgileri</h3>
-          <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+          <dl className="grid grid-cols-1 gap-x-4 gap-y-3 text-sm sm:grid-cols-2">
             <div><dt className="text-stone-500">Müşteri</dt><dd className="font-medium">{is.musteriler?.ad || "—"}</dd></div>
             <div><dt className="text-stone-500">Tarih</dt><dd className="font-medium">{tarihAralik(is.baslangic, is.bitis)}</dd></div>
             {patron && (
